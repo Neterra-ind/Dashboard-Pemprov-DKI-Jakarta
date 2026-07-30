@@ -97,7 +97,7 @@ export function DataSumber() {
             {SUMBER_AKTIF.map((s) => (
               <div key={s.nama} className="rounded-lg border border-slate-100 p-3 dark:border-slate-800">
                 <div className="mb-2 flex items-center gap-2">
-                  <s.icon className="h-4 w-4 text-brand-blue dark:text-brand-gold" />
+                  <s.icon className="h-4 w-4 text-brand-red dark:text-brand-gold" />
                   <span className="text-sm font-medium text-slate-800 dark:text-slate-100">{s.nama}</span>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400">{s.tipe}</p>

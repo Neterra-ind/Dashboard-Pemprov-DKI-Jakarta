@@ -49,7 +49,7 @@ export function DateRangeFilter({
         onClick={() => setOpen((o) => !o)}
         className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
       >
-        <Calendar className="h-3.5 w-3.5 shrink-0 text-brand-blue dark:text-brand-gold" />
+        <Calendar className="h-3.5 w-3.5 shrink-0 text-brand-red dark:text-brand-gold" />
         {teksTampil}
       </button>
 
@@ -61,7 +61,7 @@ export function DateRangeFilter({
               type="date"
               value={dari}
               onChange={(e) => onDariChange(e.target.value)}
-              className="w-36 rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/15 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+              className="w-36 rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none focus:border-brand-red focus:ring-2 focus:ring-brand-red/15 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
             />
           </label>
           <label className="flex flex-col gap-1 text-xs text-slate-500 dark:text-slate-400">
@@ -70,7 +70,7 @@ export function DateRangeFilter({
               type="date"
               value={sampai}
               onChange={(e) => onSampaiChange(e.target.value)}
-              className="w-36 rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/15 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+              className="w-36 rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none focus:border-brand-red focus:ring-2 focus:ring-brand-red/15 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
             />
           </label>
         </div>

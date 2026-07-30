@@ -29,7 +29,7 @@ function FormTindakLanjut({ item }: { item: TindakLanjutType }) {
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value as StatusPenanganan)}
-          className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-700 outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/15 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+          className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs text-slate-700 outline-none focus:border-brand-red focus:ring-2 focus:ring-brand-red/15 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
         >
           <option value="Diproses">Diproses</option>
           <option value="Selesai">Selesai</option>
@@ -37,7 +37,7 @@ function FormTindakLanjut({ item }: { item: TindakLanjutType }) {
         <button
           type="button"
           onClick={simpan}
-          className="flex items-center gap-1.5 rounded-lg bg-brand-red px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-red/90"
+          className="flex items-center gap-1.5 rounded-lg bg-brand-blue px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-blue/90"
         >
           <ClipboardCheck className="h-3.5 w-3.5" /> Update Status
         </button>
@@ -52,7 +52,7 @@ function FormTindakLanjut({ item }: { item: TindakLanjutType }) {
         onChange={(e) => setCatatan(e.target.value)}
         rows={2}
         placeholder="Catatan tindak lanjut / bukti penanganan..."
-        className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700 outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/15 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+        className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700 outline-none focus:border-brand-red focus:ring-2 focus:ring-brand-red/15 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
       />
     </div>
   )
@@ -104,7 +104,7 @@ export function TindakLanjut() {
                 {isu && (
                   <Link
                     to={`/isu/${isu.id}`}
-                    className="mb-2 inline-block text-xs font-medium text-brand-blue hover:underline dark:text-brand-gold"
+                    className="mb-2 inline-block text-xs font-medium text-brand-red hover:underline dark:text-brand-gold"
                   >
                     Lihat detail isu →
                   </Link>

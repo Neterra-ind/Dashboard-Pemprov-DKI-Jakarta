@@ -80,7 +80,7 @@ function AdminOpdSummary() {
           action={
             <Link
               to="/tindak-lanjut"
-              className="rounded-lg bg-brand-red px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-red/90"
+              className="rounded-lg bg-brand-blue px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-blue/90"
             >
               Buka Tindak Lanjut
             </Link>
@@ -265,7 +265,7 @@ export function Dashboard() {
           title="Issues Negatif"
           subtitle="Berita negatif atau berpotensi negatif yang perlu direspons OPD"
           action={
-            <Link to="/early-warning" className="text-xs font-medium text-brand-blue hover:underline dark:text-brand-gold">
+            <Link to="/early-warning" className="text-xs font-medium text-brand-red hover:underline dark:text-brand-gold">
               Lihat semua →
             </Link>
           }

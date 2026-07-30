@@ -86,7 +86,7 @@ export function IsuPimpinan() {
             className={cn(
               '-mb-px border-b-2 px-4 py-2 text-sm font-medium transition-colors',
               tab === key
-                ? 'border-brand-blue text-brand-blue dark:border-brand-gold dark:text-brand-gold'
+                ? 'border-brand-red text-brand-red dark:border-brand-gold dark:text-brand-gold'
                 : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200',
             )}
           >
@@ -102,7 +102,7 @@ export function IsuPimpinan() {
               <img
                 src={FOTO_PIMPINAN[tab]}
                 alt={reputasi.nama}
-                className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-brand-blue/10 dark:ring-brand-gold/20"
+                className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-brand-red/10 dark:ring-brand-gold/20"
               />
               <div>
                 <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{reputasi.nama}</p>
@@ -117,7 +117,7 @@ export function IsuPimpinan() {
               <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
                 <Share2 className="h-3 w-3" /> Share of Voice
               </span>
-              <span className="text-sm font-semibold text-brand-blue dark:text-brand-gold">
+              <span className="text-sm font-semibold text-brand-red dark:text-brand-gold">
                 {reputasi.shareOfVoiceRatio}%
               </span>
             </div>

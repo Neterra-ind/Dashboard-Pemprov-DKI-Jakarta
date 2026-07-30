@@ -79,7 +79,7 @@ export function EarlyWarning() {
                     <button
                       type="button"
                       onClick={() => setIsuDipilih(isu)}
-                      className="flex items-center gap-1.5 rounded-lg bg-brand-red px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-red/90"
+                      className="flex items-center gap-1.5 rounded-lg bg-brand-blue px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-blue/90"
                     >
                       <Sparkles className="h-3.5 w-3.5" />
                       Tindak Lanjuti ke OPD

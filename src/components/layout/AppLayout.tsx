@@ -73,7 +73,7 @@ export function AppLayout() {
                 cn(
                   'flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
                   isActive
-                    ? 'bg-brand-blue/10 text-brand-blue dark:bg-brand-gold/10 dark:text-brand-gold'
+                    ? 'bg-brand-red/10 text-brand-red dark:bg-brand-gold/10 dark:text-brand-gold'
                     : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800',
                 )
               }
@@ -97,7 +97,7 @@ export function AppLayout() {
                 cn(
                   'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                   isActive
-                    ? 'bg-brand-blue/10 text-brand-blue dark:bg-brand-gold/10 dark:text-brand-gold'
+                    ? 'bg-brand-red/10 text-brand-red dark:bg-brand-gold/10 dark:text-brand-gold'
                     : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800',
                 )
               }
