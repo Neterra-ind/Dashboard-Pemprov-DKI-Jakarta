@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { Dashboard } from '@/pages/Dashboard'
-import { IsuKabupaten } from '@/pages/IsuKabupaten'
+import { IsuProvinsi } from '@/pages/IsuProvinsi'
 import { IsuPimpinan } from '@/pages/IsuPimpinan'
 import { PemberitaanOpd } from '@/pages/PemberitaanOpd'
 import { EarlyWarning } from '@/pages/EarlyWarning'
@@ -14,7 +14,7 @@ function App() {
     <Routes>
       <Route element={<AppLayout />}>
         <Route path="/" element={<Dashboard />} />
-        <Route path="/isu-kabupaten" element={<IsuKabupaten />} />
+        <Route path="/isu-provinsi" element={<IsuProvinsi />} />
         <Route path="/isu-pimpinan" element={<IsuPimpinan />} />
         <Route path="/pemberitaan-opd" element={<PemberitaanOpd />} />
         <Route path="/early-warning" element={<EarlyWarning />} />

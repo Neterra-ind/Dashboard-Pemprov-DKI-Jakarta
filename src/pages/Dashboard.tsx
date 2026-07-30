@@ -24,13 +24,13 @@ import {
   daftarBerita,
   daftarEarlyWarning,
   daftarIsu,
-  daftarIsuKabupaten,
+  daftarIsuProvinsi,
   daftarOpd,
   daftarRankingOpd,
   substansiMasalahUntuk,
 } from '@/data/mockData'
 import { hitungPerHariRange, levelKeAngka } from '@/lib/aggregations'
-import ilustrasiWonosobo from '@/assets/ilustrasi-wonosobo.jpg'
+import ilustrasiJakarta from '@/assets/ilustrasi-jakarta.jpeg'
 
 const SENTIMEN_COLOR: Record<string, string> = {
   Positif: '#10b981',
@@ -115,9 +115,9 @@ export function Dashboard() {
   const { role } = useRole()
   const { statusUntukIsu } = useDisposisi()
 
-  const totalBeritaPemkab = daftarBerita.length
-  const totalBeritaBupati = useMemo(
-    () => daftarBerita.filter((b) => b.entitasTerkait === 'Bupati').length,
+  const totalBeritaPemprov = daftarBerita.length
+  const totalBeritaGubernur = useMemo(
+    () => daftarBerita.filter((b) => b.entitasTerkait === 'Gubernur').length,
     [],
   )
   const totalBeritaOpd = useMemo(
@@ -156,8 +156,8 @@ export function Dashboard() {
     return Array.from(map.entries()).map(([name, value]) => ({ name, value }))
   }, [])
 
-  const topIsuKabupaten = useMemo(
-    () => [...daftarIsuKabupaten].sort((a, b) => b.jumlahBerita - a.jumlahBerita).slice(0, 5),
+  const topIsuProvinsi = useMemo(
+    () => [...daftarIsuProvinsi].sort((a, b) => b.jumlahBerita - a.jumlahBerita).slice(0, 5),
     [],
   )
   const earlyWarningTeratas = useMemo(
@@ -186,8 +186,8 @@ export function Dashboard() {
   return (
     <div className="space-y-6">
       <img
-        src={ilustrasiWonosobo}
-        alt="Ilustrasi Kabupaten Wonosobo"
+        src={ilustrasiJakarta}
+        alt="Ilustrasi Provinsi DKI Jakarta"
         className="h-40 w-full rounded-xl object-cover sm:h-48"
       />
 
@@ -213,15 +213,15 @@ export function Dashboard() {
       )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Total Berita Pemkab Wonosobo" value={totalBeritaPemkab} icon={Newspaper} />
-        <StatCard label="Total Berita Bupati Wonosobo" value={totalBeritaBupati} icon={UserRound} />
+        <StatCard label="Total Berita Pemprov DKI Jakarta" value={totalBeritaPemprov} icon={Newspaper} />
+        <StatCard label="Total Berita Gubernur DKI Jakarta" value={totalBeritaGubernur} icon={UserRound} />
         <StatCard label="Total Berita OPD" value={totalBeritaOpd} icon={Building2} tone="warning" />
         <StatCard label="Total Berita Negatif" value={totalBeritaNegatif} icon={AlertTriangle} tone="negative" />
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
-          <CardHeader title="EKSPOS ISU WONOSOBO" subtitle="Jumlah berita per hari" />
+          <CardHeader title="EKSPOS ISU DKI JAKARTA" subtitle="Jumlah berita per hari" />
           <CardContent>
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={trenBerita} barCategoryGap="30%">
@@ -265,7 +265,7 @@ export function Dashboard() {
           title="Issues Negatif"
           subtitle="Berita negatif atau berpotensi negatif yang perlu direspons OPD"
           action={
-            <Link to="/early-warning" className="text-xs font-medium text-brand-red hover:underline dark:text-brand-gold">
+            <Link to="/early-warning" className="text-xs font-medium text-brand-blue hover:underline dark:text-brand-gold">
               Lihat semua →
             </Link>
           }
@@ -291,13 +291,13 @@ export function Dashboard() {
         </CardContent>
       </Card>
 
-      <Card id="isu-kabupaten" className="scroll-mt-4">
+      <Card id="isu-provinsi" className="scroll-mt-4">
         <CardHeader
-          title="Top 5 Isu Kabupaten Wonosobo"
+          title="Top 5 Isu Provinsi DKI Jakarta"
           subtitle="Berdasarkan jumlah berita/postingan"
         />
         <CardContent className="space-y-3">
-          {topIsuKabupaten.map((isu, idx) => (
+          {topIsuProvinsi.map((isu, idx) => (
             <div
               key={isu.id}
               className="flex items-start justify-between gap-3 border-b border-slate-100 pb-3 last:border-0 last:pb-0 dark:border-slate-800"

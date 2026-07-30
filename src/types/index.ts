@@ -1,28 +1,25 @@
-// Domain types untuk prototype "Dashboard Issue Intelligence Pemkab Wonosobo"
-// mengikuti PRD "Dashboard Issue Intelligence Pemkab Wonosobo" (Early Warning &
-// Sentiment Intelligence System).
-//
-// CATATAN: seluruh data pada prototype ini adalah DATA DUMMY/SIMULASI untuk kebutuhan
-// demo antarmuka, bukan hasil monitoring media yang riil.
+// Domain types untuk prototype "Issues Monitoring Dashboard — Pemprov DKI Jakarta",
+// duplikat dari prototype dashboard monitoring isu daerah, dengan domain data
+// disesuaikan untuk Provinsi DKI Jakarta (Gubernur/Wakil Gubernur, OPD tingkat provinsi).
 
-export type ScopeIsu = 'Nasional' | 'Kabupaten' | 'Bupati' | 'Wakil Bupati'
+export type ScopeIsu = 'Nasional' | 'Provinsi' | 'Gubernur' | 'Wakil Gubernur'
 
-export type EntitasPimpinan = 'Bupati' | 'Wakil Bupati'
+export type EntitasPimpinan = 'Gubernur' | 'Wakil Gubernur'
 
 export type Opd =
   | 'Dinas Kesehatan'
-  | 'Dinas Pendidikan dan Kebudayaan'
-  | 'Dinas Pekerjaan Umum dan Penataan Ruang'
+  | 'Dinas Pendidikan'
+  | 'Dinas Bina Marga'
   | 'Dinas Perhubungan'
   | 'Dinas Sosial'
-  | 'Dinas Pertanian, Pangan dan Perikanan'
-  | 'Dinas Pariwisata dan Kebudayaan'
-  | 'Dinas Perindustrian, Perdagangan, Koperasi dan UKM'
+  | 'Dinas Ketahanan Pangan, Kelautan dan Pertanian'
+  | 'Dinas Pariwisata dan Ekonomi Kreatif'
+  | 'Dinas Perindustrian dan Energi'
   | 'Dinas Lingkungan Hidup'
-  | 'Dinas Komunikasi dan Informatika'
+  | 'Dinas Komunikasi, Informatika dan Statistik'
   | 'Dinas Perumahan Rakyat dan Kawasan Permukiman'
   | 'Satpol PP dan Damkar'
-  | 'Bagian Humas dan Protokol Setda'
+  | 'Sekretariat Daerah Provinsi DKI Jakarta'
   | 'Kecamatan'
 
 export type KategoriIsu =
@@ -102,7 +99,7 @@ export interface Berita {
   url: string
 }
 
-// Reputasi/Share of Voice Bupati & Wakil Bupati (Module A)
+// Reputasi/Share of Voice Gubernur & Wakil Gubernur (Module A)
 export interface ReputasiPimpinan {
   entitas: EntitasPimpinan
   nama: string

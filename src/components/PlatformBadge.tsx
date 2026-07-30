@@ -6,7 +6,7 @@ export function PlatformBadge({ size = 'md' }: { platform: JenisSumber; size?: '
   return (
     <span
       className={cn(
-        'flex shrink-0 items-center justify-center rounded-lg bg-brand-red font-bold text-white',
+        'flex shrink-0 items-center justify-center rounded-lg bg-brand-blue font-bold text-white',
         size === 'sm' ? 'h-6 w-6 text-[10px]' : 'h-8 w-8 text-xs',
       )}
       title="Media Online"

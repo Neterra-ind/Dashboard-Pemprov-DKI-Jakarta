@@ -15,11 +15,12 @@ import type {
   TindakLanjut,
   Trend,
 } from '@/types'
-import beritaWonosoboMentah from './beritaWonosobo.json'
+import beritaJakartaMentah from './beritaJakarta.json'
 
-// PENTING: seluruh data di file ini adalah data dummy/simulasi untuk kebutuhan
-// prototype antarmuka Dashboard Issue Intelligence Pemkab Wonosobo, bukan hasil
-// monitoring media yang riil.
+// Dashboard Issue Monitoring — Pemprov DKI Jakarta. Data berita berbasis 3.210 artikel
+// riil (23-28 Juli 2026) hasil monitoring media terkait DKI Jakarta — lihat
+// src/data/beritaJakarta.json. Field lain (skor virality, rekomendasi tindak lanjut,
+// riwayat disposisi) tetap simulasi untuk kebutuhan demo antarmuka.
 
 // Seeded PRNG (mulberry32) supaya data mock konsisten setiap reload, bukan acak tiap render.
 function mulberry32(seed: number) {
@@ -56,18 +57,18 @@ function tanggalMundur(hariKe: number) {
 
 export const daftarOpd: Opd[] = [
   'Dinas Kesehatan',
-  'Dinas Pendidikan dan Kebudayaan',
-  'Dinas Pekerjaan Umum dan Penataan Ruang',
+  'Dinas Pendidikan',
+  'Dinas Bina Marga',
   'Dinas Perhubungan',
   'Dinas Sosial',
-  'Dinas Pertanian, Pangan dan Perikanan',
-  'Dinas Pariwisata dan Kebudayaan',
-  'Dinas Perindustrian, Perdagangan, Koperasi dan UKM',
+  'Dinas Ketahanan Pangan, Kelautan dan Pertanian',
+  'Dinas Pariwisata dan Ekonomi Kreatif',
+  'Dinas Perindustrian dan Energi',
   'Dinas Lingkungan Hidup',
-  'Dinas Komunikasi dan Informatika',
+  'Dinas Komunikasi, Informatika dan Statistik',
   'Dinas Perumahan Rakyat dan Kawasan Permukiman',
   'Satpol PP dan Damkar',
-  'Bagian Humas dan Protokol Setda',
+  'Sekretariat Daerah Provinsi DKI Jakarta',
   'Kecamatan',
 ]
 
@@ -131,12 +132,12 @@ function penyebabUntuk(kategori: KategoriIsu) {
     'Pelayanan Publik': 'Kapasitas layanan tidak sebanding dengan volume permintaan masyarakat.',
     Infrastruktur: 'Keterbatasan anggaran pemeliharaan dan koordinasi lintas OPD.',
     Pendidikan: 'Ketimpangan fasilitas dan distribusi tenaga pendidik antarwilayah.',
-    Kesehatan: 'Keterbatasan tenaga dan fasilitas kesehatan di wilayah pegunungan.',
-    'Ekonomi & Ketahanan Pangan': 'Fluktuasi harga dan keterbatasan akses input produksi bagi petani.',
+    Kesehatan: 'Keterbatasan tenaga dan fasilitas kesehatan di sejumlah wilayah.',
+    'Ekonomi & Ketahanan Pangan': 'Fluktuasi harga dan ketimpangan arus logistik antarwilayah.',
     Pariwisata: 'Infrastruktur pendukung wisata belum sebanding dengan lonjakan kunjungan.',
-    'Lingkungan & Bencana': 'Kondisi topografi rawan bencana dan lemahnya mitigasi dini.',
+    'Lingkungan & Bencana': 'Kepadatan permukiman dan minimnya mitigasi dini di kawasan rawan.',
     'Sosial & Kemiskinan': 'Penyaluran bantuan belum sepenuhnya berbasis data mutakhir.',
-    'Keamanan & Ketertiban': 'Faktor sosial-ekonomi memicu ketegangan di tingkat masyarakat.',
+    'Keamanan & Ketertiban': 'Kepadatan penduduk dan mobilitas tinggi memicu gesekan sosial.',
     'Tata Kelola Pemerintahan': 'Proses birokrasi dinilai belum sepenuhnya transparan bagi publik.',
   }
   return map[kategori]
@@ -155,34 +156,38 @@ function risikoUntuk(level: LevelRisiko) {
 const REKOMENDASI_POOL = [
   'Instruksikan OPD terkait untuk klarifikasi publik dalam 1x24 jam',
   'Jadwalkan sidak/kunjungan langsung ke lokasi isu',
-  'Siapkan siaran pers resmi melalui Bagian Humas',
-  'Libatkan camat setempat untuk mediasi dengan warga',
+  'Siapkan siaran pers resmi melalui Biro Komunikasi Publik',
+  'Libatkan camat/lurah setempat untuk mediasi dengan warga',
   'Pantau perkembangan isu di media sosial secara berkala',
   'Koordinasikan penanganan dengan OPD lintas sektor terkait',
   'Verifikasi kebenaran informasi sebelum merespons publik',
 ]
 
 const KATEGORI_OPD_MAP: Record<KategoriIsu, Opd> = {
-  'Pelayanan Publik': 'Dinas Komunikasi dan Informatika',
-  Infrastruktur: 'Dinas Pekerjaan Umum dan Penataan Ruang',
-  Pendidikan: 'Dinas Pendidikan dan Kebudayaan',
+  'Pelayanan Publik': 'Dinas Komunikasi, Informatika dan Statistik',
+  Infrastruktur: 'Dinas Bina Marga',
+  Pendidikan: 'Dinas Pendidikan',
   Kesehatan: 'Dinas Kesehatan',
-  'Ekonomi & Ketahanan Pangan': 'Dinas Pertanian, Pangan dan Perikanan',
-  Pariwisata: 'Dinas Pariwisata dan Kebudayaan',
+  'Ekonomi & Ketahanan Pangan': 'Dinas Ketahanan Pangan, Kelautan dan Pertanian',
+  Pariwisata: 'Dinas Pariwisata dan Ekonomi Kreatif',
   'Lingkungan & Bencana': 'Dinas Lingkungan Hidup',
   'Sosial & Kemiskinan': 'Dinas Sosial',
   'Keamanan & Ketertiban': 'Satpol PP dan Damkar',
-  'Tata Kelola Pemerintahan': 'Bagian Humas dan Protokol Setda',
+  'Tata Kelola Pemerintahan': 'Sekretariat Daerah Provinsi DKI Jakarta',
 }
 
 // Kalimat aktif ringkas (maks. 6-8 kata) per klaster kategori×entitas, ditulis berdasarkan
 // substansi riil berita bersentimen negatif pada klaster tersebut — dipakai pada Issues
 // Negatif agar penamaan isu langsung menggambarkan masalah di berita, bukan frasa generik.
 const SUBSTANSI_SPESIFIK_MAP: Record<string, string> = {
-  'Keamanan & Ketertiban::none': 'Truk tangki tabrak beruntun tiga kendaraan',
-  'Pelayanan Publik::none': 'Disdukcapil menolak pencatatan nama bayi',
-  'Infrastruktur::none': 'Oknum sipir diduga pungut fee proyek',
-  'Kesehatan::none': 'Genangan limbah diduga cemari lingkungan warga',
+  'Tata Kelola Pemerintahan::none': 'DKI kehilangan Rp2 triliun pajak kendaraan listrik',
+  'Tata Kelola Pemerintahan::Gubernur': 'Purbaya kritik rencana Pemprov DKI terbitkan obligasi',
+  'Lingkungan & Bencana::none': 'Kebakaran gudang dan kapal beruntun landa Jakarta',
+  'Keamanan & Ketertiban::none': 'Polisi tangkap pelaku pencurian sepatu berantai Jaksel',
+  'Ekonomi & Ketahanan Pangan::none': 'Kemacetan parah dipicu kepadatan depo peti kemas',
+  'Infrastruktur::none': 'Kebakaran rumah di Koja rugikan ratusan juta',
+  'Pendidikan::Gubernur': 'Gedung SDN Kebayoran Lama ambruk dibiarkan dua tahun',
+  'Lingkungan & Bencana::Gubernur': 'KPBB kritik rencana pencabutan insentif kendaraan listrik',
 }
 
 // Kerangka kalimat aktif ringkas per kategori — cadangan bila klaster kategori×entitas belum
@@ -205,7 +210,7 @@ function substansiMasalahDari(kategori: KategoriIsu, entitasTerkait: EntitasPimp
   const spesifik = SUBSTANSI_SPESIFIK_MAP[kunci]
   if (spesifik) return `${spesifik}.`
   const sorotan = SOROTAN_AKTIF_MAP[kategori]
-  const klausaEntitas = entitasTerkait ? ` melibatkan ${entitasTerkait} Wonosobo` : ''
+  const klausaEntitas = entitasTerkait ? ` melibatkan ${entitasTerkait} DKI Jakarta` : ''
   return `${sorotan}${klausaEntitas}.`
 }
 
@@ -216,9 +221,9 @@ export function substansiMasalahUntuk(isu: Isu): string {
 }
 
 function scopeUntukEntitas(entitasTerkait?: EntitasPimpinan): ScopeIsu {
-  if (entitasTerkait === 'Bupati') return 'Bupati'
-  if (entitasTerkait === 'Wakil Bupati') return 'Wakil Bupati'
-  return 'Kabupaten'
+  if (entitasTerkait === 'Gubernur') return 'Gubernur'
+  if (entitasTerkait === 'Wakil Gubernur') return 'Wakil Gubernur'
+  return 'Provinsi'
 }
 
 function klasifikasiDariRatio(negatifRatio: number): Klasifikasi {
@@ -234,9 +239,10 @@ function levelDariRatio(negatifRatio: number, total: number): LevelRisiko {
 }
 
 // ── Data Sumber (berita/postingan mentah) ──────────────────────────────────
-// Data riil hasil monitoring media (309 artikel, 21-27 Juli 2026) yang diimpor dari
-// "Data news isu - isu_wilayah_kab__wonosobo" (lihat src/data/beritaWonosobo.json).
-// Kategori & entitas terkait diklasifikasikan otomatis berbasis kata kunci pada judul+konten.
+// Data riil hasil monitoring media (43.624 artikel mentah, 23-28 Juli 2026) yang
+// difilter untuk relevansi spesifik DKI Jakarta dan dideduplikasi menjadi 3.210 baris
+// unik — lihat src/data/beritaJakarta.json. Kategori & entitas terkait diklasifikasikan
+// otomatis berbasis kata kunci pada judul+konten.
 interface BeritaMentah {
   tanggal: string
   judul: string
@@ -247,7 +253,7 @@ interface BeritaMentah {
   entitasTerkait?: EntitasPimpinan
 }
 
-const beritaMentah = beritaWonosoboMentah as BeritaMentah[]
+const beritaMentah = beritaJakartaMentah as BeritaMentah[]
 
 // ── Isu — diklasterkan langsung dari berita riil (kategori × entitas terkait) ─────
 // Setiap kombinasi kategori+entitas yang benar-benar muncul di data riil menjadi satu
@@ -286,11 +292,11 @@ export const daftarIsu: Isu[] = Array.from(klasterMap.values())
 
     const urutanTanggal = [...rows].sort((a, b) => (a.tanggal < b.tanggal ? -1 : 1))
     const tanggalMulai = urutanTanggal[0].tanggal
-    // Utamakan judul yang secara eksplisit menyebut "Wonosobo" sebagai representasi isu,
-    // agar daftar isu (mis. Top 5 Isu Kabupaten Wonosobo) tidak menampilkan judul yang
-    // sebenarnya membahas daerah/topik lain meski kontennya sempat menyinggung Wonosobo.
+    // Utamakan judul yang secara eksplisit menyebut Jakarta/DKI sebagai representasi isu,
+    // agar daftar isu (mis. Top 5 Isu Provinsi DKI Jakarta) tidak menampilkan judul yang
+    // sebenarnya membahas daerah/topik lain meski kontennya sempat menyinggung Jakarta.
     const urutanTerbaruDulu = [...urutanTanggal].reverse()
-    const judulRelevanTerbaru = urutanTerbaruDulu.find((r) => r.judul.toLowerCase().includes('wonosobo'))
+    const judulRelevanTerbaru = urutanTerbaruDulu.find((r) => /jakarta|dki/i.test(r.judul))
     const namaIsu = (judulRelevanTerbaru ?? urutanTerbaruDulu[0]).judul
 
     const tanggalUnik = [...new Set(rows.map((r) => r.tanggal))].sort()
@@ -326,9 +332,9 @@ export const daftarIsu: Isu[] = Array.from(klasterMap.values())
   })
   .sort((a, b) => b.jumlahBerita - a.jumlahBerita)
 
-export const daftarIsuKabupaten = daftarIsu.filter((isu) => isu.scope === 'Kabupaten')
-export const daftarIsuBupati = daftarIsu.filter((isu) => isu.entitasTerkait === 'Bupati')
-export const daftarIsuWakilBupati = daftarIsu.filter((isu) => isu.entitasTerkait === 'Wakil Bupati')
+export const daftarIsuProvinsi = daftarIsu.filter((isu) => isu.scope === 'Provinsi')
+export const daftarIsuGubernur = daftarIsu.filter((isu) => isu.entitasTerkait === 'Gubernur')
+export const daftarIsuWakilGubernur = daftarIsu.filter((isu) => isu.entitasTerkait === 'Wakil Gubernur')
 
 export const daftarEarlyWarning: Isu[] = daftarIsu.filter(
   (isu) => isu.klasifikasi === 'Negatif' || isu.klasifikasi === 'Potensi Negatif',
@@ -366,11 +372,11 @@ export function beritaUntukIsu(isuId: string): Berita[] {
   return daftarBerita.filter((b) => b.isuId === isuId)
 }
 
-// ── Reputasi / Share of Voice Bupati & Wakil Bupati ────────────────────────
+// ── Reputasi / Share of Voice Gubernur & Wakil Gubernur ────────────────────
 function buatReputasiPimpinan(entitas: EntitasPimpinan, nama: string): ReputasiPimpinan {
   const positiveRatio = randomInt(35, 80)
   const negativeRatio = randomInt(5, Math.max(6, 100 - positiveRatio - 10))
-  const isuTerkait = entitas === 'Bupati' ? daftarIsuBupati : daftarIsuWakilBupati
+  const isuTerkait = entitas === 'Gubernur' ? daftarIsuGubernur : daftarIsuWakilGubernur
   return {
     entitas,
     nama,
@@ -387,8 +393,8 @@ function buatReputasiPimpinan(entitas: EntitasPimpinan, nama: string): ReputasiP
 }
 
 export const daftarReputasiPimpinan: ReputasiPimpinan[] = [
-  buatReputasiPimpinan('Bupati', 'Afif Nurhidayat'),
-  buatReputasiPimpinan('Wakil Bupati', 'Amir Husein'),
+  buatReputasiPimpinan('Gubernur', 'Pramono Anung'),
+  buatReputasiPimpinan('Wakil Gubernur', 'Rano Karno'),
 ]
 
 export function reputasiByEntitas(entitas: EntitasPimpinan): ReputasiPimpinan | undefined {
@@ -451,11 +457,11 @@ export const daftarAlertNotifikasi: AlertNotifikasi[] = daftarEarlyWarning
     pesan: `Isu ${isu.klasifikasi === 'Potensi Negatif' ? 'Potensi Negatif' : 'Negatif'} — ${isu.namaIsu} (Severity ${isu.levelRisiko})`,
     channel: pick<'WhatsApp' | 'Telegram'>(['WhatsApp', 'Telegram']),
     tanggal: tanggalMundur(randomInt(0, 7)),
-    penerima: pick(['Sekda', 'Kepala Diskominfo', 'Tim Humas']),
+    penerima: pick(['Sekda', 'Kepala Diskominfotik', 'Tim Humas']),
   }))
   .sort((a, b) => (a.tanggal < b.tanggal ? 1 : -1))
 
 export const semuaLevelRisiko: LevelRisiko[] = ['Low', 'Medium', 'High', 'Critical']
 export const semuaSentimenList: Sentimen[] = SENTIMEN
 export const semuaKlasifikasi: Klasifikasi[] = ['Positif', 'Negatif', 'Potensi Negatif']
-export const semuaScopeIsu: ScopeIsu[] = ['Nasional', 'Kabupaten', 'Bupati', 'Wakil Bupati']
+export const semuaScopeIsu: ScopeIsu[] = ['Nasional', 'Provinsi', 'Gubernur', 'Wakil Gubernur']

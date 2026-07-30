@@ -5,11 +5,11 @@
 @custom-variant dark (&:is(.dark, .dark *));
 
 @theme {
-  /* Palet diambil dari Lambang Kabupaten Wonosobo (merah pekat, kuning padi/wreath, hijau sawah) */
-  --color-brand-red: #b5121b;
-  --color-brand-gold: #f2b705;
-  --color-brand-green: #00954a;
-  --color-brand-cream: #fdf3d7;
+  /* Palet diambil langsung dari sampel warna Logo DKI Jakarta (biru perisai,
+     merah tulisan/nyala Monas, kuning pita/wreath). */
+  --color-brand-blue: #27419d;
+  --color-brand-red: #eb2027;
+  --color-brand-gold: #ffcb05;
 }
 
 :root {

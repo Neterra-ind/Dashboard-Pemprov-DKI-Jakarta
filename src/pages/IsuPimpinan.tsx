@@ -19,29 +19,29 @@ import { Newspaper, Share2, ThumbsDown, ThumbsUp, TrendingUp } from 'lucide-reac
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { KlasifikasiBadge } from '@/components/ui/Badge'
 import { cn } from '@/lib/utils'
-import { daftarBerita, daftarIsuBupati, daftarIsuWakilBupati, reputasiByEntitas } from '@/data/mockData'
+import { daftarBerita, daftarIsuGubernur, daftarIsuWakilGubernur, reputasiByEntitas } from '@/data/mockData'
 import type { EntitasPimpinan } from '@/types'
-import fotoBupati from '@/assets/bupati-afif-nurhidayat.jpg'
-import fotoWakilBupati from '@/assets/wakil-bupati-amir-husein.jpg'
+import fotoGubernur from '@/assets/gubernur-pramono-anung.jpg'
+import fotoWakilGubernur from '@/assets/wakil-gubernur-rano-karno.jpg'
 
 const SENTIMEN_COLOR = { Positif: '#10b981', Negatif: '#f43f5e' }
 
 const TABS: { key: EntitasPimpinan; label: string }[] = [
-  { key: 'Bupati', label: 'Isu Bupati Wonosobo' },
-  { key: 'Wakil Bupati', label: 'Isu Wakil Bupati Wonosobo' },
+  { key: 'Gubernur', label: 'Isu Gubernur DKI Jakarta' },
+  { key: 'Wakil Gubernur', label: 'Isu Wakil Gubernur DKI Jakarta' },
 ]
 
 const FOTO_PIMPINAN: Record<EntitasPimpinan, string> = {
-  Bupati: fotoBupati,
-  'Wakil Bupati': fotoWakilBupati,
+  Gubernur: fotoGubernur,
+  'Wakil Gubernur': fotoWakilGubernur,
 }
 
 export function IsuPimpinan() {
-  const [tab, setTab] = useState<EntitasPimpinan>('Bupati')
+  const [tab, setTab] = useState<EntitasPimpinan>('Gubernur')
 
   const reputasi = reputasiByEntitas(tab)
   const isuTerkait = useMemo(
-    () => (tab === 'Bupati' ? daftarIsuBupati : daftarIsuWakilBupati).slice(0, 8),
+    () => (tab === 'Gubernur' ? daftarIsuGubernur : daftarIsuWakilGubernur).slice(0, 8),
     [tab],
   )
 
@@ -69,11 +69,11 @@ export function IsuPimpinan() {
     <div className="space-y-4">
       <div>
         <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-          Isu Bupati &amp; Wakil Bupati
+          Isu Gubernur &amp; Wakil Gubernur
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400">
-          Pemantauan persepsi publik, citra media, dan narasi yang melekat khusus pada entitas Bupati
-          dan Wakil Bupati Wonosobo — Media Share of Voice (SoV) &amp; sentimen netizen/media.
+          Pemantauan persepsi publik, citra media, dan narasi yang melekat khusus pada entitas Gubernur
+          dan Wakil Gubernur DKI Jakarta — Media Share of Voice (SoV) &amp; sentimen netizen/media.
         </p>
       </div>
 
@@ -86,7 +86,7 @@ export function IsuPimpinan() {
             className={cn(
               '-mb-px border-b-2 px-4 py-2 text-sm font-medium transition-colors',
               tab === key
-                ? 'border-brand-red text-brand-red dark:border-brand-gold dark:text-brand-gold'
+                ? 'border-brand-blue text-brand-blue dark:border-brand-gold dark:text-brand-gold'
                 : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200',
             )}
           >
@@ -102,11 +102,11 @@ export function IsuPimpinan() {
               <img
                 src={FOTO_PIMPINAN[tab]}
                 alt={reputasi.nama}
-                className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-brand-red/10 dark:ring-brand-gold/20"
+                className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-brand-blue/10 dark:ring-brand-gold/20"
               />
               <div>
                 <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{reputasi.nama}</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{tab} Wonosobo</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{tab} DKI Jakarta</p>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   Total Berita {beritaTerkait.length}
                 </p>
@@ -117,7 +117,7 @@ export function IsuPimpinan() {
               <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
                 <Share2 className="h-3 w-3" /> Share of Voice
               </span>
-              <span className="text-sm font-semibold text-brand-red dark:text-brand-gold">
+              <span className="text-sm font-semibold text-brand-blue dark:text-brand-gold">
                 {reputasi.shareOfVoiceRatio}%
               </span>
             </div>

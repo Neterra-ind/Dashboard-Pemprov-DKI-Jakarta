@@ -30,7 +30,7 @@ export function DetailIsu() {
     return (
       <div className="space-y-4">
         <p className="text-sm text-slate-500 dark:text-slate-400">Isu tidak ditemukan.</p>
-        <Link to="/" className="text-sm font-medium text-brand-red hover:underline dark:text-brand-gold">
+        <Link to="/" className="text-sm font-medium text-brand-blue hover:underline dark:text-brand-gold">
           ← Kembali ke Executive Summary
         </Link>
       </div>
@@ -123,7 +123,7 @@ export function DetailIsu() {
           <ul className="space-y-1.5 text-sm text-slate-600 dark:text-slate-300">
             {isu.rekomendasiAI.map((r) => (
               <li key={r} className="flex items-start gap-2">
-                <ListChecks className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-red dark:text-brand-gold" />
+                <ListChecks className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-blue dark:text-brand-gold" />
                 {r}
               </li>
             ))}

@@ -20,7 +20,7 @@ import { FilterSelect } from '@/components/FilterSelect'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { KlasifikasiBadge, TrendBadge } from '@/components/ui/Badge'
 import { hitungPerHariRange } from '@/lib/aggregations'
-import { daftarBerita, daftarIsuKabupaten, daftarKategoriIsu, semuaKlasifikasi } from '@/data/mockData'
+import { daftarBerita, daftarIsuProvinsi, daftarKategoriIsu, semuaKlasifikasi } from '@/data/mockData'
 import type { Isu } from '@/types'
 
 const SENTIMEN_COLOR: Record<string, string> = {
@@ -58,19 +58,19 @@ const columns: ColumnDef<Isu, any>[] = [
   },
 ]
 
-export function IsuKabupaten() {
+export function IsuProvinsi() {
   const [kategori, setKategori] = useState('')
   const [klasifikasi, setKlasifikasi] = useState('')
 
   const terfilter = useMemo(
     () =>
-      daftarIsuKabupaten.filter(
+      daftarIsuProvinsi.filter(
         (isu) => (!kategori || isu.kategori === kategori) && (!klasifikasi || isu.klasifikasi === klasifikasi),
       ),
     [kategori, klasifikasi],
   )
 
-  // Kategori dari isu Kabupaten yang lolos filter (kategori/klasifikasi), dipakai
+  // Kategori dari isu Provinsi yang lolos filter (kategori/klasifikasi), dipakai
   // untuk menarik berita riil yang sepadan agar grafik tren & sentimen konsisten dengan
   // rentang tanggal data asli (bukan tanggal isu yang jarang/tidak merata).
   const kategoriTerfilter = useMemo(() => new Set(terfilter.map((isu) => isu.kategori)), [terfilter])
@@ -126,7 +126,7 @@ export function IsuKabupaten() {
     <div className="space-y-4">
       <div>
         <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-          Isu Kabupaten Wonosobo
+          Isu Provinsi DKI Jakarta
         </h1>
       </div>
 
@@ -179,7 +179,7 @@ export function IsuKabupaten() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
-          <CardHeader title="MEDIA SHARE" subtitle="Distribusi sumber pemberitaan isu Kabupaten (sesuai filter)" />
+          <CardHeader title="MEDIA SHARE" subtitle="Distribusi sumber pemberitaan isu Provinsi (sesuai filter)" />
           <CardContent>
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={mediaShare} layout="vertical" margin={{ left: 16 }}>

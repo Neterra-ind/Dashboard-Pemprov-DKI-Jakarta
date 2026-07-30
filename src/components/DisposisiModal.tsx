@@ -55,7 +55,7 @@ export function DisposisiModal({
               onChange={(e) => setCatatan(e.target.value)}
               rows={3}
               placeholder="Contoh: Mohon segera diklarifikasi ke publik dan laporkan progres penanganan dalam 2x24 jam."
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-brand-red focus:ring-2 focus:ring-brand-red/15 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/15 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
             />
           </label>
         </div>
