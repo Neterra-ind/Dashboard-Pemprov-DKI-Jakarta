@@ -1,0 +1,44 @@
+@import 'tailwindcss';
+
+/* Nonaktifkan dark mode otomatis (mengikuti preferensi OS) — dashboard ini
+   selalu tampil terang/putih terlepas dari pengaturan sistem pengguna. */
+@custom-variant dark (&:is(.dark, .dark *));
+
+@theme {
+  /* Palet diambil dari Lambang Kabupaten Wonosobo (merah pekat, kuning padi/wreath, hijau sawah) */
+  --color-brand-red: #b5121b;
+  --color-brand-gold: #f2b705;
+  --color-brand-green: #00954a;
+  --color-brand-cream: #fdf3d7;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

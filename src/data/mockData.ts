@@ -1,0 +1,461 @@
+import type {
+  AlertNotifikasi,
+  Berita,
+  EntitasPimpinan,
+  Isu,
+  JenisSumber,
+  KategoriIsu,
+  Klasifikasi,
+  LevelRisiko,
+  Opd,
+  RankingOpd,
+  ReputasiPimpinan,
+  ScopeIsu,
+  Sentimen,
+  TindakLanjut,
+  Trend,
+} from '@/types'
+import beritaWonosoboMentah from './beritaWonosobo.json'
+
+// PENTING: seluruh data di file ini adalah data dummy/simulasi untuk kebutuhan
+// prototype antarmuka Dashboard Issue Intelligence Pemkab Wonosobo, bukan hasil
+// monitoring media yang riil.
+
+// Seeded PRNG (mulberry32) supaya data mock konsisten setiap reload, bukan acak tiap render.
+function mulberry32(seed: number) {
+  let a = seed
+  return function () {
+    a |= 0
+    a = (a + 0x6d2b79f5) | 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+const rng = mulberry32(20260728)
+
+function pick<T>(arr: T[]): T {
+  return arr[Math.floor(rng() * arr.length)]
+}
+
+function pickMany<T>(arr: T[], n: number): T[] {
+  const shuffled = [...arr].sort(() => rng() - 0.5)
+  return shuffled.slice(0, Math.min(n, arr.length))
+}
+
+function randomInt(min: number, max: number) {
+  return Math.floor(rng() * (max - min + 1)) + min
+}
+
+function tanggalMundur(hariKe: number) {
+  const d = new Date()
+  d.setDate(d.getDate() - hariKe)
+  return d.toISOString().slice(0, 10)
+}
+
+export const daftarOpd: Opd[] = [
+  'Dinas Kesehatan',
+  'Dinas Pendidikan dan Kebudayaan',
+  'Dinas Pekerjaan Umum dan Penataan Ruang',
+  'Dinas Perhubungan',
+  'Dinas Sosial',
+  'Dinas Pertanian, Pangan dan Perikanan',
+  'Dinas Pariwisata dan Kebudayaan',
+  'Dinas Perindustrian, Perdagangan, Koperasi dan UKM',
+  'Dinas Lingkungan Hidup',
+  'Dinas Komunikasi dan Informatika',
+  'Dinas Perumahan Rakyat dan Kawasan Permukiman',
+  'Satpol PP dan Damkar',
+  'Bagian Humas dan Protokol Setda',
+  'Kecamatan',
+]
+
+export const daftarKategoriIsu: KategoriIsu[] = [
+  'Pelayanan Publik',
+  'Infrastruktur',
+  'Pendidikan',
+  'Kesehatan',
+  'Ekonomi & Ketahanan Pangan',
+  'Pariwisata',
+  'Lingkungan & Bencana',
+  'Sosial & Kemiskinan',
+  'Keamanan & Ketertiban',
+  'Tata Kelola Pemerintahan',
+]
+
+export const daftarJenisSumber: JenisSumber[] = ['Media Online']
+
+const SENTIMEN: Sentimen[] = ['Positif', 'Netral', 'Negatif']
+
+function levelDariSentimen(sentimen: Sentimen): LevelRisiko {
+  if (sentimen === 'Negatif') return pick(['Medium', 'High', 'Critical'])
+  if (sentimen === 'Netral') return pick(['Low', 'Medium'])
+  return 'Low'
+}
+
+function viralityScoreUntuk(level: LevelRisiko) {
+  const range: Record<LevelRisiko, [number, number]> = {
+    Low: [5, 30],
+    Medium: [25, 55],
+    High: [50, 85],
+    Critical: [75, 99],
+  }
+  const [min, max] = range[level]
+  return randomInt(min, max)
+}
+
+function estimasiEskalasiUntuk(klasifikasi: Klasifikasi, level: LevelRisiko) {
+  if (klasifikasi === 'Positif') return 'Tidak ada indikasi eskalasi negatif.'
+  const map: Record<LevelRisiko, string> = {
+    Low: 'Rendah — kemungkinan mereda dengan sendirinya dalam 3-5 hari.',
+    Medium: 'Sedang — berpotensi membesar dalam 3-5 hari bila tidak direspons.',
+    High: 'Tinggi — berpotensi membesar dalam 1-2 hari bila dibiarkan.',
+    Critical: 'Sangat tinggi — berpotensi viral dan menjadi krisis komunikasi dalam 24 jam.',
+  }
+  return map[level]
+}
+
+function ringkasanUntuk(judul: string, sentimen: Sentimen) {
+  const dampak =
+    sentimen === 'Negatif'
+      ? 'berisiko menjadi sorotan publik lebih luas bila tidak segera ditindaklanjuti'
+      : sentimen === 'Netral'
+        ? 'masih dalam tahap pemantauan, belum menunjukkan eskalasi signifikan'
+        : 'mendapat respons positif dari masyarakat dan media'
+  return `${judul}. Isu ini ${dampak}.`
+}
+
+function penyebabUntuk(kategori: KategoriIsu) {
+  const map: Record<KategoriIsu, string> = {
+    'Pelayanan Publik': 'Kapasitas layanan tidak sebanding dengan volume permintaan masyarakat.',
+    Infrastruktur: 'Keterbatasan anggaran pemeliharaan dan koordinasi lintas OPD.',
+    Pendidikan: 'Ketimpangan fasilitas dan distribusi tenaga pendidik antarwilayah.',
+    Kesehatan: 'Keterbatasan tenaga dan fasilitas kesehatan di wilayah pegunungan.',
+    'Ekonomi & Ketahanan Pangan': 'Fluktuasi harga dan keterbatasan akses input produksi bagi petani.',
+    Pariwisata: 'Infrastruktur pendukung wisata belum sebanding dengan lonjakan kunjungan.',
+    'Lingkungan & Bencana': 'Kondisi topografi rawan bencana dan lemahnya mitigasi dini.',
+    'Sosial & Kemiskinan': 'Penyaluran bantuan belum sepenuhnya berbasis data mutakhir.',
+    'Keamanan & Ketertiban': 'Faktor sosial-ekonomi memicu ketegangan di tingkat masyarakat.',
+    'Tata Kelola Pemerintahan': 'Proses birokrasi dinilai belum sepenuhnya transparan bagi publik.',
+  }
+  return map[kategori]
+}
+
+function risikoUntuk(level: LevelRisiko) {
+  const map: Record<LevelRisiko, string> = {
+    Low: 'Risiko rendah, dapat ditangani melalui mekanisme rutin OPD.',
+    Medium: 'Risiko sedang, berpotensi menjadi perhatian media dalam waktu dekat.',
+    High: 'Risiko tinggi, berpotensi memicu tekanan publik bila tidak direspons cepat.',
+    Critical: 'Risiko kritis, berpotensi eskalasi cepat dan menjadi krisis komunikasi.',
+  }
+  return map[level]
+}
+
+const REKOMENDASI_POOL = [
+  'Instruksikan OPD terkait untuk klarifikasi publik dalam 1x24 jam',
+  'Jadwalkan sidak/kunjungan langsung ke lokasi isu',
+  'Siapkan siaran pers resmi melalui Bagian Humas',
+  'Libatkan camat setempat untuk mediasi dengan warga',
+  'Pantau perkembangan isu di media sosial secara berkala',
+  'Koordinasikan penanganan dengan OPD lintas sektor terkait',
+  'Verifikasi kebenaran informasi sebelum merespons publik',
+]
+
+const KATEGORI_OPD_MAP: Record<KategoriIsu, Opd> = {
+  'Pelayanan Publik': 'Dinas Komunikasi dan Informatika',
+  Infrastruktur: 'Dinas Pekerjaan Umum dan Penataan Ruang',
+  Pendidikan: 'Dinas Pendidikan dan Kebudayaan',
+  Kesehatan: 'Dinas Kesehatan',
+  'Ekonomi & Ketahanan Pangan': 'Dinas Pertanian, Pangan dan Perikanan',
+  Pariwisata: 'Dinas Pariwisata dan Kebudayaan',
+  'Lingkungan & Bencana': 'Dinas Lingkungan Hidup',
+  'Sosial & Kemiskinan': 'Dinas Sosial',
+  'Keamanan & Ketertiban': 'Satpol PP dan Damkar',
+  'Tata Kelola Pemerintahan': 'Bagian Humas dan Protokol Setda',
+}
+
+// Kalimat aktif ringkas (maks. 6-8 kata) per klaster kategori×entitas, ditulis berdasarkan
+// substansi riil berita bersentimen negatif pada klaster tersebut — dipakai pada Issues
+// Negatif agar penamaan isu langsung menggambarkan masalah di berita, bukan frasa generik.
+const SUBSTANSI_SPESIFIK_MAP: Record<string, string> = {
+  'Keamanan & Ketertiban::none': 'Truk tangki tabrak beruntun tiga kendaraan',
+  'Pelayanan Publik::none': 'Disdukcapil menolak pencatatan nama bayi',
+  'Infrastruktur::none': 'Oknum sipir diduga pungut fee proyek',
+  'Kesehatan::none': 'Genangan limbah diduga cemari lingkungan warga',
+}
+
+// Kerangka kalimat aktif ringkas per kategori — cadangan bila klaster kategori×entitas belum
+// memiliki kalimat spesifik di SUBSTANSI_SPESIFIK_MAP di atas.
+const SOROTAN_AKTIF_MAP: Record<KategoriIsu, string> = {
+  'Pelayanan Publik': 'Masyarakat menyoroti pelayanan publik',
+  Infrastruktur: 'Publik menyoroti kondisi infrastruktur',
+  Pendidikan: 'Publik menyoroti isu pendidikan',
+  Kesehatan: 'Publik menyoroti isu kesehatan',
+  'Ekonomi & Ketahanan Pangan': 'Publik menyoroti ekonomi dan ketahanan pangan',
+  Pariwisata: 'Publik menyoroti pengelolaan pariwisata',
+  'Lingkungan & Bencana': 'Publik menyoroti lingkungan dan kebencanaan',
+  'Sosial & Kemiskinan': 'Publik menyoroti penanganan sosial-kemiskinan',
+  'Keamanan & Ketertiban': 'Publik menyoroti keamanan dan ketertiban',
+  'Tata Kelola Pemerintahan': 'Publik menyoroti tata kelola pemerintahan',
+}
+
+function substansiMasalahDari(kategori: KategoriIsu, entitasTerkait: EntitasPimpinan | undefined): string {
+  const kunci = `${kategori}::${entitasTerkait ?? 'none'}`
+  const spesifik = SUBSTANSI_SPESIFIK_MAP[kunci]
+  if (spesifik) return `${spesifik}.`
+  const sorotan = SOROTAN_AKTIF_MAP[kategori]
+  const klausaEntitas = entitasTerkait ? ` melibatkan ${entitasTerkait} Wonosobo` : ''
+  return `${sorotan}${klausaEntitas}.`
+}
+
+const substansiMasalahById = new Map<string, string>()
+
+export function substansiMasalahUntuk(isu: Isu): string {
+  return substansiMasalahById.get(isu.id) ?? isu.namaIsu
+}
+
+function scopeUntukEntitas(entitasTerkait?: EntitasPimpinan): ScopeIsu {
+  if (entitasTerkait === 'Bupati') return 'Bupati'
+  if (entitasTerkait === 'Wakil Bupati') return 'Wakil Bupati'
+  return 'Kabupaten'
+}
+
+function klasifikasiDariRatio(negatifRatio: number): Klasifikasi {
+  if (negatifRatio >= 0.4) return 'Negatif'
+  if (negatifRatio >= 0.15) return 'Potensi Negatif'
+  return 'Positif'
+}
+
+function levelDariRatio(negatifRatio: number, total: number): LevelRisiko {
+  if (negatifRatio >= 0.5) return total >= 20 ? 'Critical' : 'High'
+  if (negatifRatio >= 0.25) return 'Medium'
+  return 'Low'
+}
+
+// ── Data Sumber (berita/postingan mentah) ──────────────────────────────────
+// Data riil hasil monitoring media (309 artikel, 21-27 Juli 2026) yang diimpor dari
+// "Data news isu - isu_wilayah_kab__wonosobo" (lihat src/data/beritaWonosobo.json).
+// Kategori & entitas terkait diklasifikasikan otomatis berbasis kata kunci pada judul+konten.
+interface BeritaMentah {
+  tanggal: string
+  judul: string
+  sumber: string
+  sentimen: Sentimen
+  url: string
+  kategori: KategoriIsu
+  entitasTerkait?: EntitasPimpinan
+}
+
+const beritaMentah = beritaWonosoboMentah as BeritaMentah[]
+
+// ── Isu — diklasterkan langsung dari berita riil (kategori × entitas terkait) ─────
+// Setiap kombinasi kategori+entitas yang benar-benar muncul di data riil menjadi satu
+// Isu, dengan jumlah berita, sentimen dominan, severity, dan tren dihitung dari data
+// riil tersebut (bukan lagi isu simulasi acak).
+interface KlasterBerita {
+  kategori: KategoriIsu
+  entitasTerkait?: EntitasPimpinan
+  rows: BeritaMentah[]
+}
+
+const klasterMap = new Map<string, KlasterBerita>()
+for (const r of beritaMentah) {
+  const key = `${r.kategori}::${r.entitasTerkait ?? 'none'}`
+  if (!klasterMap.has(key)) {
+    klasterMap.set(key, { kategori: r.kategori, entitasTerkait: r.entitasTerkait, rows: [] })
+  }
+  klasterMap.get(key)!.rows.push(r)
+}
+
+export const daftarIsu: Isu[] = Array.from(klasterMap.values())
+  .map((klaster, index) => {
+    const { kategori, entitasTerkait, rows } = klaster
+    const total = rows.length
+    const jumlahPerSentimen: Record<Sentimen, number> = { Positif: 0, Netral: 0, Negatif: 0 }
+    for (const r of rows) jumlahPerSentimen[r.sentimen]++
+    const sentimenDominan = (Object.entries(jumlahPerSentimen) as [Sentimen, number][]).sort(
+      (a, b) => b[1] - a[1],
+    )[0][0]
+    const negatifRatio = jumlahPerSentimen.Negatif / total
+
+    const level = levelDariRatio(negatifRatio, total)
+    const klasifikasi = klasifikasiDariRatio(negatifRatio)
+    const scope = scopeUntukEntitas(entitasTerkait)
+    const opd = KATEGORI_OPD_MAP[kategori]
+
+    const urutanTanggal = [...rows].sort((a, b) => (a.tanggal < b.tanggal ? -1 : 1))
+    const tanggalMulai = urutanTanggal[0].tanggal
+    // Utamakan judul yang secara eksplisit menyebut "Wonosobo" sebagai representasi isu,
+    // agar daftar isu (mis. Top 5 Isu Kabupaten Wonosobo) tidak menampilkan judul yang
+    // sebenarnya membahas daerah/topik lain meski kontennya sempat menyinggung Wonosobo.
+    const urutanTerbaruDulu = [...urutanTanggal].reverse()
+    const judulRelevanTerbaru = urutanTerbaruDulu.find((r) => r.judul.toLowerCase().includes('wonosobo'))
+    const namaIsu = (judulRelevanTerbaru ?? urutanTerbaruDulu[0]).judul
+
+    const tanggalUnik = [...new Set(rows.map((r) => r.tanggal))].sort()
+    const tengah = tanggalUnik[Math.floor(tanggalUnik.length / 2)]
+    const jumlahAwal = rows.filter((r) => r.tanggal < tengah).length
+    const jumlahAkhir = rows.filter((r) => r.tanggal >= tengah).length
+    const trend: Trend = jumlahAkhir > jumlahAwal ? 'Naik' : jumlahAkhir < jumlahAwal ? 'Turun' : 'Stabil'
+
+    const id = `isu-${index + 1}-${scope.toLowerCase().replace(/\s+/g, '-')}`
+    substansiMasalahById.set(id, substansiMasalahDari(kategori, entitasTerkait))
+
+    return {
+      id,
+      namaIsu,
+      scope,
+      kategori,
+      opd,
+      entitasTerkait,
+      klasifikasi,
+      levelRisiko: level,
+      viralityScore: viralityScoreUntuk(level),
+      estimasiEskalasi: estimasiEskalasiUntuk(klasifikasi, level),
+      jumlahBerita: total,
+      sentimenDominan,
+      ringkasanAI: ringkasanUntuk(namaIsu, sentimenDominan),
+      penyebabAI: penyebabUntuk(kategori),
+      risikoAI: risikoUntuk(level),
+      rekomendasiAI: pickMany(REKOMENDASI_POOL, randomInt(2, 4)),
+      sumberUtama: ['Media Online'] as JenisSumber[],
+      tanggalMulai,
+      trend,
+    }
+  })
+  .sort((a, b) => b.jumlahBerita - a.jumlahBerita)
+
+export const daftarIsuKabupaten = daftarIsu.filter((isu) => isu.scope === 'Kabupaten')
+export const daftarIsuBupati = daftarIsu.filter((isu) => isu.entitasTerkait === 'Bupati')
+export const daftarIsuWakilBupati = daftarIsu.filter((isu) => isu.entitasTerkait === 'Wakil Bupati')
+
+export const daftarEarlyWarning: Isu[] = daftarIsu.filter(
+  (isu) => isu.klasifikasi === 'Negatif' || isu.klasifikasi === 'Potensi Negatif',
+)
+
+export function isuById(id: string): Isu | undefined {
+  return daftarIsu.find((isu) => isu.id === id)
+}
+
+const isuByKlaster = new Map(daftarIsu.map((isu) => [`${isu.kategori}::${isu.entitasTerkait ?? 'none'}`, isu]))
+
+export const daftarBerita: Berita[] = beritaMentah
+  .map((r, i) => {
+    const isuAcuan = isuByKlaster.get(`${r.kategori}::${r.entitasTerkait ?? 'none'}`)!
+    return {
+      id: `berita-${i + 1}`,
+      isuId: isuAcuan.id,
+      tanggal: r.tanggal,
+      judul: r.judul,
+      sumber: r.sumber,
+      jenisSumber: 'Media Online' as JenisSumber,
+      opd: isuAcuan.opd,
+      entitasTerkait: r.entitasTerkait,
+      kategori: r.kategori,
+      sentimen: r.sentimen,
+      levelRisiko: levelDariSentimen(r.sentimen),
+      confidenceScore: randomInt(70, 99),
+      ringkasanAI: ringkasanUntuk(r.judul, r.sentimen),
+      url: r.url,
+    }
+  })
+  .sort((a, b) => (a.tanggal < b.tanggal ? 1 : -1))
+
+export function beritaUntukIsu(isuId: string): Berita[] {
+  return daftarBerita.filter((b) => b.isuId === isuId)
+}
+
+// ── Reputasi / Share of Voice Bupati & Wakil Bupati ────────────────────────
+function buatReputasiPimpinan(entitas: EntitasPimpinan, nama: string): ReputasiPimpinan {
+  const positiveRatio = randomInt(35, 80)
+  const negativeRatio = randomInt(5, Math.max(6, 100 - positiveRatio - 10))
+  const isuTerkait = entitas === 'Bupati' ? daftarIsuBupati : daftarIsuWakilBupati
+  return {
+    entitas,
+    nama,
+    shareOfVoiceRatio: randomInt(15, 65),
+    positiveRatio,
+    negativeRatio,
+    engagementRate: Number((rng() * 10 + 1).toFixed(1)),
+    topIsu: pickMany([...new Set(isuTerkait.map((isu) => isu.kategori))], 3),
+    trendData: Array.from({ length: 14 }, (_, hari) => ({
+      tanggal: tanggalMundur(13 - hari),
+      nilai: randomInt(20, 100),
+    })),
+  }
+}
+
+export const daftarReputasiPimpinan: ReputasiPimpinan[] = [
+  buatReputasiPimpinan('Bupati', 'Afif Nurhidayat'),
+  buatReputasiPimpinan('Wakil Bupati', 'Amir Husein'),
+]
+
+export function reputasiByEntitas(entitas: EntitasPimpinan): ReputasiPimpinan | undefined {
+  return daftarReputasiPimpinan.find((r) => r.entitas === entitas)
+}
+
+// ── Ranking OPD (Module B — Pemberitaan OPD) ───────────────────────────────
+export const daftarRankingOpd: RankingOpd[] = daftarOpd
+  .map((opd) => {
+    const isuOpd = daftarIsu.filter((isu) => isu.opd === opd)
+    return {
+      opd,
+      jumlahBerita: isuOpd.reduce((total, isu) => total + isu.jumlahBerita, 0),
+      jumlahPositif: isuOpd.filter((isu) => isu.klasifikasi === 'Positif').length,
+      jumlahNegatif: isuOpd.filter((isu) => isu.klasifikasi === 'Negatif' || isu.klasifikasi === 'Potensi Negatif')
+        .length,
+      severityScore: Math.round(
+        isuOpd.reduce((total, isu) => total + viralityScoreUntuk(isu.levelRisiko), 0) /
+          Math.max(isuOpd.length, 1),
+      ),
+    }
+  })
+  .sort((a, b) => b.jumlahBerita - a.jumlahBerita)
+
+// ── Tindak Lanjut / Disposisi (seed) ───────────────────────────────────────
+const calonDisposisi = daftarEarlyWarning.slice(0, 10)
+const STATUS_SEED: Array<'Didisposisikan' | 'Diproses' | 'Selesai'> = [
+  'Didisposisikan',
+  'Diproses',
+  'Selesai',
+]
+
+export const seedTindakLanjut: TindakLanjut[] = calonDisposisi.slice(0, 6).map((isu, i) => {
+  const status = STATUS_SEED[i % STATUS_SEED.length]
+  return {
+    id: `tl-${i + 1}`,
+    isuId: isu.id,
+    opdTujuan: isu.opd,
+    catatanArahan: 'Mohon segera diklarifikasi ke publik dan laporkan progres penanganan dalam 2x24 jam.',
+    didisposisikanOleh: isu.entitasTerkait ?? 'Sekda',
+    tanggalDisposisi: tanggalMundur(randomInt(1, 10)),
+    status,
+    catatanTindakLanjut:
+      status === 'Selesai'
+        ? 'Sudah dilakukan klarifikasi ke media dan penanganan lapangan, isu dinyatakan selesai.'
+        : status === 'Diproses'
+          ? 'Tim OPD sedang turun ke lapangan untuk verifikasi dan penanganan awal.'
+          : undefined,
+    tanggalTindakLanjut: status === 'Didisposisikan' ? undefined : tanggalMundur(randomInt(0, 5)),
+  }
+})
+
+// ── Riwayat Alert Notifikasi (WhatsApp/Telegram) ───────────────────────────
+export const daftarAlertNotifikasi: AlertNotifikasi[] = daftarEarlyWarning
+  .filter((isu) => isu.levelRisiko === 'High' || isu.levelRisiko === 'Critical')
+  .slice(0, 12)
+  .map((isu, i) => ({
+    id: `alert-${i + 1}`,
+    isuId: isu.id,
+    pesan: `Isu ${isu.klasifikasi === 'Potensi Negatif' ? 'Potensi Negatif' : 'Negatif'} — ${isu.namaIsu} (Severity ${isu.levelRisiko})`,
+    channel: pick<'WhatsApp' | 'Telegram'>(['WhatsApp', 'Telegram']),
+    tanggal: tanggalMundur(randomInt(0, 7)),
+    penerima: pick(['Sekda', 'Kepala Diskominfo', 'Tim Humas']),
+  }))
+  .sort((a, b) => (a.tanggal < b.tanggal ? 1 : -1))
+
+export const semuaLevelRisiko: LevelRisiko[] = ['Low', 'Medium', 'High', 'Critical']
+export const semuaSentimenList: Sentimen[] = SENTIMEN
+export const semuaKlasifikasi: Klasifikasi[] = ['Positif', 'Negatif', 'Potensi Negatif']
+export const semuaScopeIsu: ScopeIsu[] = ['Nasional', 'Kabupaten', 'Bupati', 'Wakil Bupati']
