@@ -26,10 +26,10 @@ const NAV_ITEMS: { to: string; label: string; icon: typeof LayoutDashboard; end?
 
 function BrandMark() {
   return (
-    <div className="mb-8 flex items-center gap-3 px-2 md:mb-8">
+    <div className="mb-8 flex items-center gap-1.5 px-2 md:mb-8">
       <img src={logoDkiJakarta} alt="Logo DKI Jakarta" className="h-10 w-10 shrink-0 object-contain" />
       <div>
-        <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+        <p className="whitespace-nowrap text-sm font-semibold text-slate-900 dark:text-slate-100">
           Issues Monitoring Dashboard
         </p>
         <p className="text-sm font-semibold uppercase text-slate-500 dark:text-slate-400">PEMPROV DKI JAKARTA</p>
@@ -57,7 +57,7 @@ export function AppLayout() {
         <div className="mb-3 flex items-center gap-2">
           <img src={logoDkiJakarta} alt="Logo DKI Jakarta" className="h-8 w-8 shrink-0 object-contain" />
           <div>
-            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+            <p className="whitespace-nowrap text-sm font-semibold text-slate-900 dark:text-slate-100">
               Issues Monitoring Dashboard
             </p>
             <p className="text-sm font-semibold uppercase text-slate-500 dark:text-slate-400">PEMPROV DKI JAKARTA</p>
