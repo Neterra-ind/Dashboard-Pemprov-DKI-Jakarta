@@ -30,7 +30,7 @@ function BrandMark() {
       <img src={logoDkiJakarta} alt="Logo DKI Jakarta" className="h-10 w-10 shrink-0 object-contain" />
       <div>
         <p className="whitespace-nowrap text-sm font-semibold text-slate-900 dark:text-slate-100">
-          Issues Monitoring Dashboard
+          Regional Media Analytics
         </p>
         <p className="text-sm font-semibold uppercase text-slate-500 dark:text-slate-400">PEMPROV DKI JAKARTA</p>
       </div>
@@ -58,7 +58,7 @@ export function AppLayout() {
           <img src={logoDkiJakarta} alt="Logo DKI Jakarta" className="h-8 w-8 shrink-0 object-contain" />
           <div>
             <p className="whitespace-nowrap text-sm font-semibold text-slate-900 dark:text-slate-100">
-              Issues Monitoring Dashboard
+              Regional Media Analytics
             </p>
             <p className="text-sm font-semibold uppercase text-slate-500 dark:text-slate-400">PEMPROV DKI JAKARTA</p>
           </div>

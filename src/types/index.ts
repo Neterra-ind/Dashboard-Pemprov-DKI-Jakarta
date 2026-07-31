@@ -1,4 +1,4 @@
-// Domain types untuk prototype "Issues Monitoring Dashboard — Pemprov DKI Jakarta",
+// Domain types untuk prototype "Regional Media Analytics — Pemprov DKI Jakarta",
 // duplikat dari prototype dashboard monitoring isu daerah, dengan domain data
 // disesuaikan untuk Provinsi DKI Jakarta (Gubernur/Wakil Gubernur, OPD tingkat provinsi).
 

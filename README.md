@@ -1,4 +1,4 @@
-# Issues Monitoring Dashboard — Pemprov DKI Jakarta
+# Regional Media Analytics — Pemprov DKI Jakarta
 
 Dashboard eksekutif untuk memantau isu dan pemberitaan media terkait Provinsi DKI Jakarta: klasifikasi kategori isu, sentimen, ranking OPD, dan alur disposisi/tindak lanjut ke OPD terkait.
 
