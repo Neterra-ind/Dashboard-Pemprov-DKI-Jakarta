@@ -21,8 +21,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: npm ci
+          node-version: 22
+      # npm install (bukan `npm ci`) agar tahan terhadap perbedaan platform pada
+      # dependensi native opsional Vite/rolldown (@rolldown/binding-*). `npm ci`
+      # ketat menolak lockfile yang dibuat di OS berbeda pada runner Linux.
+      - run: npm install --no-audit --no-fund
       - run: npm run build
         env:
           VITE_HASH_ROUTER: 'true'
