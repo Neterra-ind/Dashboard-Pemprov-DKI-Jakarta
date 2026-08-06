@@ -1,57 +1,49 @@
 import { cn } from '@/lib/utils'
 import type { Klasifikasi, LevelRisiko, Sentimen, StatusPenanganan, Trend } from '@/types'
 
+const POSITIVE = 'bg-success-soft text-success-text ring-success/20'
+const NEGATIVE = 'bg-danger-soft text-danger-text ring-danger/25'
+const NEUTRAL = 'bg-neutral-soft text-slate-500 ring-slate-400/20'
+const WARNING = 'bg-warning-soft text-warning-text ring-warning/25'
+const INFO = 'bg-info-soft text-info-text ring-info/20'
+
 const sentimenStyle: Record<Sentimen, string> = {
-  Positif:
-    'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-400',
-  Netral:
-    'bg-slate-100 text-slate-600 ring-slate-500/20 dark:bg-slate-500/10 dark:text-slate-300',
-  Negatif:
-    'bg-rose-50 text-rose-700 ring-rose-600/20 dark:bg-rose-500/10 dark:text-rose-400',
+  Positif: POSITIVE,
+  Netral: NEUTRAL,
+  Negatif: NEGATIVE,
 }
 
 const levelStyle: Record<LevelRisiko, string> = {
-  Low: 'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-400',
-  Medium:
-    'bg-amber-50 text-amber-700 ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-400',
-  High: 'bg-orange-50 text-orange-700 ring-orange-600/20 dark:bg-orange-500/10 dark:text-orange-400',
-  Critical:
-    'bg-red-100 text-red-800 ring-red-600/30 dark:bg-red-500/15 dark:text-red-400',
+  Low: POSITIVE,
+  Medium: WARNING,
+  High: 'bg-orange-50 text-orange-700 ring-orange-600/20',
+  Critical: NEGATIVE,
 }
 
 const trendStyle: Record<Trend, string> = {
-  Naik:
-    'bg-rose-50 text-rose-700 ring-rose-600/20 dark:bg-rose-500/10 dark:text-rose-400',
-  Turun:
-    'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-400',
-  Stabil:
-    'bg-slate-100 text-slate-600 ring-slate-500/20 dark:bg-slate-500/10 dark:text-slate-300',
+  Naik: NEGATIVE,
+  Turun: POSITIVE,
+  Stabil: NEUTRAL,
 }
 
 const klasifikasiStyle: Record<Klasifikasi, string> = {
-  Positif:
-    'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-400',
-  Negatif: 'bg-red-100 text-red-800 ring-red-600/30 dark:bg-red-500/15 dark:text-red-400',
-  'Potensi Negatif':
-    'bg-amber-50 text-amber-700 ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-400',
+  Positif: POSITIVE,
+  Negatif: NEGATIVE,
+  'Potensi Negatif': WARNING,
 }
 
 const statusStyle: Record<StatusPenanganan, string> = {
-  'Belum Ditindaklanjuti':
-    'bg-slate-100 text-slate-600 ring-slate-500/20 dark:bg-slate-500/10 dark:text-slate-300',
-  Didisposisikan:
-    'bg-sky-50 text-sky-700 ring-sky-600/20 dark:bg-sky-500/10 dark:text-sky-400',
-  Diproses:
-    'bg-amber-50 text-amber-700 ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-400',
-  Selesai:
-    'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-400',
+  'Belum Ditindaklanjuti': NEUTRAL,
+  Didisposisikan: INFO,
+  Diproses: WARNING,
+  Selesai: POSITIVE,
 }
 
 function BaseBadge({ label, style }: { label: string; style: string }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset',
+        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset',
         style,
       )}
     >

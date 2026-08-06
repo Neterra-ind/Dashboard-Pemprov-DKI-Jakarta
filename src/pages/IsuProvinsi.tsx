@@ -18,16 +18,21 @@ import {
 import { DataTable } from '@/components/DataTable'
 import { FilterSelect } from '@/components/FilterSelect'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { KlasifikasiBadge, TrendBadge } from '@/components/ui/Badge'
 import { hitungPerHariRange } from '@/lib/aggregations'
+import {
+  AreaGradient,
+  axisProps,
+  ChartLegend,
+  ChartTooltip,
+  chart,
+  cursorFill,
+  gridProps,
+  SENTIMEN_COLOR,
+} from '@/lib/chartTheme'
 import { daftarBerita, daftarIsuProvinsi, daftarKategoriIsu, semuaKlasifikasi } from '@/data/mockData'
 import type { Isu } from '@/types'
-
-const SENTIMEN_COLOR: Record<string, string> = {
-  Positif: '#10b981',
-  Netral: '#94a3b8',
-  Negatif: '#f43f5e',
-}
 
 const columns: ColumnDef<Isu, any>[] = [
   {
@@ -123,14 +128,13 @@ export function IsuProvinsi() {
   }, [beritaTerfilter])
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-          Isu Provinsi DKI Jakarta
-        </h1>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        title="Isu Provinsi DKI Jakarta"
+        subtitle="Tren pemberitaan, sentimen, dan distribusi media untuk isu-isu tingkat provinsi."
+      />
 
-      <Card className="p-4">
+      <Card className="p-5">
         <div className="flex flex-wrap gap-3">
           <FilterSelect label="Kategori Isu" value={kategori} options={daftarKategoriIsu} onChange={setKategori} />
           <FilterSelect label="Klasifikasi" value={klasifikasi} options={semuaKlasifikasi} onChange={setKlasifikasi} />
@@ -139,38 +143,42 @@ export function IsuProvinsi() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
-          <CardHeader title="GRAFIK TREND" subtitle="Jumlah berita per hari (sesuai filter)" />
+          <CardHeader title="Grafik Tren" subtitle="Jumlah berita per hari (sesuai filter)" />
           <CardContent>
-            <ResponsiveContainer width="100%" height={240}>
-              <AreaChart data={trenMingguan}>
+            <ResponsiveContainer width="100%" height={260}>
+              <AreaChart data={trenMingguan} margin={{ top: 4, right: 8, left: -8, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="colorTrenKab" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#b5121b" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#b5121b" stopOpacity={0} />
-                  </linearGradient>
+                  <AreaGradient id="provTren" color={chart.accent} />
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="tanggal" fontSize={11} tickLine={false} />
-                <YAxis fontSize={12} tickLine={false} allowDecimals={false} />
-                <Tooltip />
-                <Area type="monotone" dataKey="jumlah" stroke="#b5121b" fill="url(#colorTrenKab)" strokeWidth={2} />
+                <CartesianGrid {...gridProps} vertical={false} />
+                <XAxis dataKey="tanggal" {...axisProps} minTickGap={24} />
+                <YAxis {...axisProps} allowDecimals={false} width={32} />
+                <Tooltip content={<ChartTooltip />} cursor={cursorFill} />
+                <Area
+                  type="monotone"
+                  dataKey="jumlah"
+                  name="Berita"
+                  stroke={chart.accent}
+                  fill="url(#provTren)"
+                  strokeWidth={2.5}
+                />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader title="VOLUME SENTIMENT" />
+          <CardHeader title="Volume Sentimen" subtitle="Distribusi berita per sentimen" />
           <CardContent>
-            <ResponsiveContainer width="100%" height={240}>
+            <ResponsiveContainer width="100%" height={260}>
               <PieChart>
-                <Pie data={volumeSentimen} dataKey="value" nameKey="name" innerRadius={50} outerRadius={80} paddingAngle={2}>
+                <Pie data={volumeSentimen} dataKey="value" nameKey="name" innerRadius={54} outerRadius={84} paddingAngle={2} stroke="none">
                   {volumeSentimen.map((entry) => (
                     <Cell key={entry.name} fill={SENTIMEN_COLOR[entry.name]} />
                   ))}
                 </Pie>
-                <Legend />
-                <Tooltip />
+                <Tooltip content={<ChartTooltip />} />
+                <Legend content={<ChartLegend />} />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
@@ -179,37 +187,37 @@ export function IsuProvinsi() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
-          <CardHeader title="MEDIA SHARE" subtitle="Distribusi sumber pemberitaan isu Provinsi (sesuai filter)" />
+          <CardHeader title="Media Share" subtitle="Distribusi sumber pemberitaan isu Provinsi (sesuai filter)" />
           <CardContent>
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={mediaShare} layout="vertical" margin={{ left: 16 }}>
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                <XAxis type="number" fontSize={12} allowDecimals={false} />
-                <YAxis type="category" dataKey="name" fontSize={11} width={140} />
-                <Tooltip />
-                <Bar dataKey="value" fill="#f2b705" radius={[0, 4, 4, 0]} maxBarSize={20} />
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={mediaShare} layout="vertical" margin={{ left: 8, right: 16 }}>
+                <CartesianGrid {...gridProps} horizontal={false} />
+                <XAxis type="number" {...axisProps} allowDecimals={false} />
+                <YAxis type="category" dataKey="name" {...axisProps} width={140} />
+                <Tooltip content={<ChartTooltip />} cursor={cursorFill} />
+                <Bar dataKey="value" name="Isu" fill={chart.gold} radius={[0, 6, 6, 0]} maxBarSize={22} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader title="EKSPOS MEDIA" subtitle="Jumlah pemberitaan per nama media (sesuai filter)" />
+          <CardHeader title="Ekspos Media" subtitle="Jumlah pemberitaan per nama media (sesuai filter)" />
           <CardContent>
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={eksposMedia} layout="vertical" margin={{ left: 16 }}>
-                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                <XAxis type="number" fontSize={12} allowDecimals={false} />
-                <YAxis type="category" dataKey="name" fontSize={11} width={140} />
-                <Tooltip />
-                <Bar dataKey="value" fill="#b5121b" radius={[0, 4, 4, 0]} maxBarSize={20} />
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={eksposMedia} layout="vertical" margin={{ left: 8, right: 16 }}>
+                <CartesianGrid {...gridProps} horizontal={false} />
+                <XAxis type="number" {...axisProps} allowDecimals={false} />
+                <YAxis type="category" dataKey="name" {...axisProps} width={140} />
+                <Tooltip content={<ChartTooltip />} cursor={cursorFill} />
+                <Bar dataKey="value" name="Berita" fill={chart.accent} radius={[0, 6, 6, 0]} maxBarSize={22} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="p-4">
+      <Card className="p-5">
         <DataTable data={terfilter} columns={columns} searchPlaceholder="Cari nama isu, OPD..." />
       </Card>
     </div>

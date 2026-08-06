@@ -42,20 +42,20 @@ export function DetailIsu() {
   const sumberBerita = beritaUntukIsu(isu.id)
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <Link
         to="/early-warning"
-        className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-primary"
       >
         <ArrowLeft className="h-4 w-4" /> Kembali
       </Link>
 
       <Card>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-4">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100">{isu.namaIsu}</h1>
-              <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+              <h1 className="text-[22px] font-bold leading-tight tracking-tight text-slate-900">{isu.namaIsu}</h1>
+              <p className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
                 <span>{isu.scope}</span>
                 <span className="flex items-center gap-1">
                   <Building2 className="h-3 w-3" /> {isu.opd}
@@ -81,7 +81,7 @@ export function DetailIsu() {
             <button
               type="button"
               onClick={() => setModalTerbuka(true)}
-              className="flex items-center gap-1.5 rounded-lg bg-brand-blue px-4 py-2 text-sm font-semibold text-white hover:bg-brand-blue/90"
+              className="flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-strong"
             >
               <Sparkles className="h-4 w-4" />
               Tindak Lanjuti ke OPD

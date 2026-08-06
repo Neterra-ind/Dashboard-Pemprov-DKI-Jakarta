@@ -12,12 +12,12 @@ export function FilterSelect({
   labelMap?: Record<string, string>
 }) {
   return (
-    <label className="flex flex-col gap-1 text-xs text-slate-500 dark:text-slate-400">
+    <label className="flex flex-col gap-1.5 text-xs font-medium text-slate-500">
       {label}
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm text-slate-700 outline-none focus:border-brand-red focus:ring-2 focus:ring-brand-red/15 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+        className="rounded-xl border border-[var(--color-border-strong)] bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
       >
         <option value="">Semua</option>
         {options.map((opt) => (

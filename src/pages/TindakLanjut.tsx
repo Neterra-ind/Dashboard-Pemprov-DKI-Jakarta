@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { CheckCircle2, ClipboardCheck } from 'lucide-react'
 import { FilterSelect } from '@/components/FilterSelect'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { StatusBadge } from '@/components/ui/Badge'
 import { useRole } from '@/lib/role'
 import { useDisposisi } from '@/lib/store'
@@ -37,7 +38,7 @@ function FormTindakLanjut({ item }: { item: TindakLanjutType }) {
         <button
           type="button"
           onClick={simpan}
-          className="flex items-center gap-1.5 rounded-lg bg-brand-blue px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-blue/90"
+          className="flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-primary-strong"
         >
           <ClipboardCheck className="h-3.5 w-3.5" /> Update Status
         </button>
@@ -71,18 +72,13 @@ export function TindakLanjut() {
   )
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-          Tindak Lanjut / Disposisi
-        </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Isu yang telah didisposisikan pimpinan ke OPD Anda. Update status penanganan dan catatan
-          tindak lanjut di sini.
-        </p>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        title="Tindak Lanjut / Disposisi"
+        subtitle="Isu yang telah didisposisikan pimpinan ke OPD Anda. Update status penanganan dan catatan tindak lanjut di sini."
+      />
 
-      <Card className="p-4">
+      <Card className="p-5">
         <FilterSelect label="OPD" value={opdAktif} options={daftarOpd} onChange={(v) => setOpdAktif(v as typeof opdAktif)} />
       </Card>
 

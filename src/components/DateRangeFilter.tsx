@@ -43,34 +43,34 @@ export function DateRangeFilter({
 
   return (
     <div ref={containerRef} className="relative">
-      <span className="mb-1 block text-xs text-slate-500 dark:text-slate-400">{label}</span>
+      <span className="mb-1.5 block text-xs font-medium text-slate-500">{label}</span>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
+        className="flex items-center gap-2 rounded-xl border border-[var(--color-border-strong)] bg-white px-3 py-2 text-xs font-semibold text-slate-600 shadow-sm transition hover:border-primary/40 hover:bg-slate-50"
       >
-        <Calendar className="h-3.5 w-3.5 shrink-0 text-brand-red dark:text-brand-gold" />
+        <Calendar className="h-3.5 w-3.5 shrink-0 text-primary" />
         {teksTampil}
       </button>
 
       {open && (
-        <div className="absolute z-20 mt-2 flex gap-2 rounded-lg border border-slate-200 bg-white p-3 shadow-lg dark:border-slate-700 dark:bg-slate-900">
-          <label className="flex flex-col gap-1 text-xs text-slate-500 dark:text-slate-400">
+        <div className="absolute z-20 mt-2 flex gap-2 rounded-2xl border border-[var(--color-border)] bg-white p-3 shadow-[var(--shadow-pop)]">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-500">
             Dari
             <input
               type="date"
               value={dari}
               onChange={(e) => onDariChange(e.target.value)}
-              className="w-36 rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none focus:border-brand-red focus:ring-2 focus:ring-brand-red/15 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+              className="w-36 rounded-lg border border-[var(--color-border-strong)] bg-white px-2 py-1.5 text-xs text-slate-700 outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
             />
           </label>
-          <label className="flex flex-col gap-1 text-xs text-slate-500 dark:text-slate-400">
+          <label className="flex flex-col gap-1 text-xs font-medium text-slate-500">
             Sampai
             <input
               type="date"
               value={sampai}
               onChange={(e) => onSampaiChange(e.target.value)}
-              className="w-36 rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 outline-none focus:border-brand-red focus:ring-2 focus:ring-brand-red/15 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+              className="w-36 rounded-lg border border-[var(--color-border-strong)] bg-white px-2 py-1.5 text-xs text-slate-700 outline-none focus:border-primary focus:ring-2 focus:ring-primary/15"
             />
           </label>
         </div>

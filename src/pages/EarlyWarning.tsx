@@ -5,6 +5,7 @@ import { DisposisiModal } from '@/components/DisposisiModal'
 import { SeverityGauge } from '@/components/SeverityGauge'
 import { FilterSelect } from '@/components/FilterSelect'
 import { Card, CardContent } from '@/components/ui/Card'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { KlasifikasiBadge } from '@/components/ui/Badge'
 import { useDisposisi } from '@/lib/store'
 import { daftarEarlyWarning, semuaKlasifikasi, substansiMasalahUntuk } from '@/data/mockData'
@@ -32,16 +33,13 @@ export function EarlyWarning() {
   }
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Issues Negatif</h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Berita negatif atau berpotensi negatif yang perlu direspons OPD. Disposisikan ke OPD
-          terkait langsung dari sini.
-        </p>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        title="Issues Negatif"
+        subtitle="Berita negatif atau berpotensi negatif yang perlu direspons OPD. Disposisikan ke OPD terkait langsung dari sini."
+      />
 
-      <Card className="p-4">
+      <Card className="p-5">
         <div className="flex flex-wrap gap-3">
           <FilterSelect label="Klasifikasi" value={klasifikasi} options={klasifikasiOptions} onChange={setKlasifikasi} />
         </div>
@@ -58,17 +56,15 @@ export function EarlyWarning() {
           const status = statusUntukIsu(isu.id)
           return (
             <Card key={isu.id}>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-3.5">
                 <div className="flex items-start justify-between gap-2">
                   <Link to={`/isu/${isu.id}`} className="hover:underline">
-                    <p className="font-semibold text-slate-800 dark:text-slate-100">
-                      {substansiMasalahUntuk(isu)}
-                    </p>
+                    <p className="font-semibold text-slate-800">{substansiMasalahUntuk(isu)}</p>
                   </Link>
                   <KlasifikasiBadge value={isu.klasifikasi} />
                 </div>
 
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-slate-500">
                   {isu.jumlahBerita} ekspos berita · Kewenangan: {isu.opd}
                 </p>
 
@@ -79,7 +75,7 @@ export function EarlyWarning() {
                     <button
                       type="button"
                       onClick={() => setIsuDipilih(isu)}
-                      className="flex items-center gap-1.5 rounded-lg bg-brand-blue px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-blue/90"
+                      className="flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-primary-strong"
                     >
                       <Sparkles className="h-3.5 w-3.5" />
                       Tindak Lanjuti ke OPD

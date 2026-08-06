@@ -7,6 +7,7 @@ import { DateRangeFilter } from '@/components/DateRangeFilter'
 import { PlatformBadge } from '@/components/PlatformBadge'
 import { SentimenBadge } from '@/components/ui/Badge'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { useRole } from '@/lib/role'
 import { daftarBerita, daftarJenisSumber, daftarKategoriIsu } from '@/data/mockData'
 import type { Berita } from '@/types'
@@ -78,14 +79,11 @@ export function DataSumber() {
   )
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">Data Sumber</h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Berita dan postingan mentah hasil klasifikasi AI (sentimen, kategori) — bukti pendukung di
-          balik setiap isu.
-        </p>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        title="Data Sumber"
+        subtitle="Berita dan postingan mentah hasil klasifikasi AI (sentimen, kategori) — bukti pendukung di balik setiap isu."
+      />
 
       {role === 'Super Admin' && (
         <Card>
@@ -95,13 +93,15 @@ export function DataSumber() {
           />
           <CardContent className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {SUMBER_AKTIF.map((s) => (
-              <div key={s.nama} className="rounded-lg border border-slate-100 p-3 dark:border-slate-800">
+              <div key={s.nama} className="rounded-xl border border-[var(--color-border)] p-4">
                 <div className="mb-2 flex items-center gap-2">
-                  <s.icon className="h-4 w-4 text-brand-red dark:text-brand-gold" />
-                  <span className="text-sm font-medium text-slate-800 dark:text-slate-100">{s.nama}</span>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-soft text-primary">
+                    <s.icon className="h-4 w-4" />
+                  </span>
+                  <span className="text-sm font-semibold text-slate-800">{s.nama}</span>
                 </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">{s.tipe}</p>
-                <p className="mt-1 flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400">
+                <p className="text-xs text-slate-500">{s.tipe}</p>
+                <p className="mt-1.5 flex items-center gap-1 text-xs font-medium text-positive">
                   <RefreshCw className="h-3 w-3" /> Refresh setiap {s.interval}
                 </p>
               </div>
@@ -110,7 +110,7 @@ export function DataSumber() {
         </Card>
       )}
 
-      <Card className="p-4">
+      <Card className="p-5">
         <div className="flex flex-wrap items-end gap-3">
           <FilterSelect label="Jenis Sumber" value={jenisSumber} options={daftarJenisSumber} onChange={setJenisSumber} />
           <FilterSelect label="Kategori" value={kategori} options={daftarKategoriIsu} onChange={setKategori} />
@@ -135,7 +135,7 @@ export function DataSumber() {
         </div>
       </Card>
 
-      <Card className="p-4">
+      <Card className="p-5">
         <DataTable data={filtered} columns={columns} searchPlaceholder="Cari judul, media..." />
       </Card>
     </div>
