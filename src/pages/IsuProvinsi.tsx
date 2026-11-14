@@ -31,8 +31,12 @@ import {
   gridProps,
   SENTIMEN_COLOR,
 } from '@/lib/chartTheme'
-import { daftarBerita, daftarIsuProvinsi, daftarKategoriIsu, semuaKlasifikasi } from '@/data/mockData'
+import { daftarIsuProvinsi, daftarKategoriIsu, semuaKlasifikasi } from '@/data/mockData'
+import beritaJakartaRaw from '@/data/beritaJakarta.json'
 import type { Isu } from '@/types'
+
+type BeritaRaw = { tanggal: string; judul: string; sumber: string; sentimen: string; url: string; kategori: string; entitasTerkait?: string }
+const beritaJakarta = beritaJakartaRaw as BeritaRaw[]
 
 const columns: ColumnDef<Isu, any>[] = [
   {
@@ -81,12 +85,12 @@ export function IsuProvinsi() {
   const kategoriTerfilter = useMemo(() => new Set(terfilter.map((isu) => isu.kategori)), [terfilter])
 
   const beritaTerfilter = useMemo(
-    () => daftarBerita.filter((b) => !b.entitasTerkait && kategoriTerfilter.has(b.kategori)),
+    () => beritaJakarta.filter((b) => !b.entitasTerkait && kategoriTerfilter.has(b.kategori)),
     [kategoriTerfilter],
   )
 
   const rentangTanggalData = useMemo(() => {
-    const semuaTanggal = daftarBerita.map((b) => b.tanggal).sort()
+    const semuaTanggal = beritaJakarta.map((b) => b.tanggal).sort()
     return { min: semuaTanggal[0], max: semuaTanggal[semuaTanggal.length - 1] }
   }, [])
 
