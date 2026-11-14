@@ -66,7 +66,7 @@ function PoweredByNeterra() {
   return (
     <div className="flex items-center gap-2 px-1">
       <span className="text-[13px] text-slate-400">Powered by</span>
-      <img src={logoNeterra} alt="Neterra Indonesia" className="h-10 w-auto object-contain" />
+      <img src={logoNeterra} alt="Neterra Indonesia" className="h-5 w-auto object-contain" />
     </div>
   )
 }
