@@ -27,9 +27,7 @@ const NAV_ITEMS: { to: string; label: string; icon: typeof LayoutDashboard; end?
 function BrandMark() {
   return (
     <div className="flex items-center gap-3 px-2">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-soft ring-1 ring-primary/10">
-        <img src={logoDkiJakarta} alt="Logo DKI Jakarta" className="h-8 w-8 object-contain" />
-      </div>
+      <img src={logoDkiJakarta} alt="Logo DKI Jakarta" className="h-11 w-11 shrink-0 object-contain" />
       <p className="text-[15px] font-bold uppercase leading-tight tracking-wide text-slate-900">
         Pemprov
         <br />
@@ -137,7 +135,7 @@ export function AppLayout() {
       </aside>
 
       <main className="min-w-0 flex-1 px-4 py-6 md:px-8 md:py-8">
-        <div className="mx-auto max-w-7xl">
+        <div className="w-full">
           <Outlet />
         </div>
       </main>
