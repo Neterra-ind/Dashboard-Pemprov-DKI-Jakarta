@@ -61,13 +61,13 @@ function HeroBanner() {
       />
       <div className="absolute inset-0 bg-gradient-to-r from-primary-strong/90 via-primary/50 to-transparent" />
       <div className="absolute inset-0 flex flex-col justify-center gap-1 px-6 sm:px-9">
-        <span className="w-fit rounded-full bg-accent/90 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-white backdrop-blur">
-          Government Media Intelligence
-        </span>
-        <h2 className="mt-1 text-2xl font-bold leading-tight text-white drop-shadow-sm sm:text-[28px]">
+        <span className="w-fit rounded-full bg-accent/90 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur">
           Government Media Analytics
+        </span>
+        <h2 className="mt-1 text-lg font-bold leading-tight text-white drop-shadow-sm sm:text-xl">
+          Pemantauan Media Pemprov DKI Jakarta
         </h2>
-        <p className="max-w-md text-sm text-white/85">
+        <p className="max-w-md text-xs text-white/85 sm:text-[13px]">
           Pemantauan pemberitaan, sentimen, dan isu strategis Pemprov DKI Jakarta secara real-time.
         </p>
       </div>
