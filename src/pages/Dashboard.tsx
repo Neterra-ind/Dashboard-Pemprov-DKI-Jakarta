@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Area,
@@ -28,10 +28,12 @@ import {
   daftarEarlyWarning,
   daftarIsu,
   daftarIsuProvinsi,
+  daftarJenisSumber,
   daftarOpd,
   daftarRankingOpd,
   substansiMasalahUntuk,
 } from '@/data/mockData'
+import { getJenisSumber } from '@/lib/utils'
 import beritaJakartaRaw from '@/data/beritaJakarta.json'
 
 type BeritaRaw = { tanggal: string; judul: string; sumber: string; sentimen: string; url: string; kategori: string; entitasTerkait?: string }
@@ -143,21 +145,26 @@ function AdminOpdSummary() {
 
 export function Dashboard() {
   const { role } = useRole()
-
   const { statusUntukIsu } = useDisposisi()
+  const [jenisSumber, setJenisSumber] = useState('')
 
-  const totalBeritaPemprov = beritaJakarta.length
+  const beritaFiltered = useMemo(
+    () => (jenisSumber ? beritaJakarta.filter((b) => getJenisSumber(b.sumber) === jenisSumber) : beritaJakarta),
+    [jenisSumber],
+  )
+
+  const totalBeritaPemprov = beritaFiltered.length
   const totalBeritaGubernur = useMemo(
-    () => beritaJakarta.filter((b) => b.entitasTerkait === 'Gubernur').length,
-    [],
+    () => beritaFiltered.filter((b) => b.entitasTerkait === 'Gubernur').length,
+    [beritaFiltered],
   )
   const totalBeritaOpd = useMemo(
-    () => beritaJakarta.filter((b) => b.kategori === 'Tata Kelola Pemerintahan').length,
-    [],
+    () => beritaFiltered.filter((b) => b.kategori === 'Tata Kelola Pemerintahan').length,
+    [beritaFiltered],
   )
   const totalBeritaNegatif = useMemo(
-    () => beritaJakarta.filter((b) => b.sentimen === 'Negatif').length,
-    [],
+    () => beritaFiltered.filter((b) => b.sentimen === 'Negatif').length,
+    [beritaFiltered],
   )
 
   const belumDitindaklanjuti = useMemo(
@@ -171,21 +178,22 @@ export function Dashboard() {
   )
 
   const trenBerita = useMemo(() => {
-    const semuaTanggal = beritaJakarta.map((b) => b.tanggal).sort()
+    const semuaTanggal = beritaFiltered.map((b) => b.tanggal).sort()
+    if (!semuaTanggal.length) return []
     return hitungPerHariRange(
-      beritaJakarta.map((b) => ({ tanggal: b.tanggal })),
+      beritaFiltered.map((b) => ({ tanggal: b.tanggal })),
       semuaTanggal[0],
       semuaTanggal[semuaTanggal.length - 1],
     )
-  }, [])
+  }, [beritaFiltered])
 
   const distribusiSentimen = useMemo(() => {
     const map = new Map<string, number>()
-    for (const b of beritaJakarta) {
+    for (const b of beritaFiltered) {
       map.set(b.sentimen, (map.get(b.sentimen) ?? 0) + 1)
     }
     return Array.from(map.entries()).map(([name, value]) => ({ name, value }))
-  }, [])
+  }, [beritaFiltered])
 
   const totalSentimen = distribusiSentimen.reduce((s, d) => s + d.value, 0)
 
@@ -213,11 +221,11 @@ export function Dashboard() {
   )
 
   function handleExport() {
-    const rows = beritaJakarta.map((b) => [
+    const rows = beritaFiltered.map((b) => [
       b.tanggal,
       b.judul,
       b.sumber,
-      b.jenisSumber,
+      getJenisSumber(b.sumber),
       b.kategori,
       b.sentimen,
       b.entitasTerkait ?? '-',
@@ -276,7 +284,12 @@ export function Dashboard() {
         </Link>
       )}
 
-      {/* 3 — KPI Cards */}
+      {/* 3 — Filter Sumber */}
+      <Card className="p-4">
+        <FilterSelect label="Jenis Sumber" value={jenisSumber} options={daftarJenisSumber} onChange={setJenisSumber} />
+      </Card>
+
+      {/* 4 — KPI Cards */}
       <section>
         <SectionLabel hint="periode data aktif">Ringkasan Pemberitaan</SectionLabel>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -310,7 +323,7 @@ export function Dashboard() {
         </div>
       </section>
 
-      {/* 4 — Primary Analytics */}
+      {/* 5 — Primary Analytics */}
       <section>
         <SectionLabel hint="rentang data penuh">Analitik Utama</SectionLabel>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -372,7 +385,7 @@ export function Dashboard() {
         </div>
       </section>
 
-      {/* 5 — Secondary Analytics */}
+      {/* 6 — Secondary Analytics */}
       <section className="space-y-4">
         <SectionLabel>Analitik Sekunder</SectionLabel>
 
@@ -424,7 +437,7 @@ export function Dashboard() {
         </Card>
       </section>
 
-      {/* 6 — Detailed Table */}
+      {/* 7 — Detailed Table */}
       <section>
         <SectionLabel>Isu Teratas</SectionLabel>
         <Card id="isu-provinsi" className="scroll-mt-4">

@@ -31,7 +31,8 @@ import {
   gridProps,
   SENTIMEN_COLOR,
 } from '@/lib/chartTheme'
-import { daftarIsuProvinsi, daftarKategoriIsu, semuaKlasifikasi } from '@/data/mockData'
+import { daftarIsuProvinsi, daftarJenisSumber, daftarKategoriIsu, semuaKlasifikasi } from '@/data/mockData'
+import { getJenisSumber } from '@/lib/utils'
 import beritaJakartaRaw from '@/data/beritaJakarta.json'
 import type { Isu } from '@/types'
 
@@ -65,6 +66,7 @@ const columns: ColumnDef<Isu, any>[] = [
 export function IsuProvinsi() {
   const [kategori, setKategori] = useState('')
   const [klasifikasi, setKlasifikasi] = useState('')
+  const [jenisSumber, setJenisSumber] = useState('')
 
   const terfilter = useMemo(
     () =>
@@ -80,8 +82,13 @@ export function IsuProvinsi() {
   const kategoriTerfilter = useMemo(() => new Set(terfilter.map((isu) => isu.kategori)), [terfilter])
 
   const beritaTerfilter = useMemo(
-    () => beritaJakarta.filter((b) => !b.entitasTerkait && kategoriTerfilter.has(b.kategori)),
-    [kategoriTerfilter],
+    () => beritaJakarta.filter(
+      (b) =>
+        !b.entitasTerkait &&
+        kategoriTerfilter.has(b.kategori) &&
+        (!jenisSumber || getJenisSumber(b.sumber) === jenisSumber),
+    ),
+    [kategoriTerfilter, jenisSumber],
   )
 
   const rentangTanggalData = useMemo(() => {
@@ -148,6 +155,7 @@ export function IsuProvinsi() {
         <div className="flex flex-wrap gap-3">
           <FilterSelect label="Kategori Isu" value={kategori} options={daftarKategoriIsu} onChange={setKategori} />
           <FilterSelect label="Klasifikasi" value={klasifikasi} options={semuaKlasifikasi} onChange={setKlasifikasi} />
+          <FilterSelect label="Jenis Sumber" value={jenisSumber} options={daftarJenisSumber} onChange={setJenisSumber} />
         </div>
       </Card>
 
