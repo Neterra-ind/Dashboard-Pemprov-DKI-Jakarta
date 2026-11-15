@@ -270,21 +270,6 @@ export function IsuProvinsi() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
-          <CardHeader title="Top 5 Kategori Isu Provinsi DKI Jakarta" subtitle="Jumlah berita/postingan per kategori isu" />
-          <CardContent>
-            <ResponsiveContainer width="100%" height={Math.max(160, top5Isu.length * 40)}>
-              <BarChart data={top5Isu} layout="vertical" margin={{ left: 8, right: 24, top: 0, bottom: 0 }}>
-                <CartesianGrid {...gridProps} horizontal={false} />
-                <XAxis type="number" {...axisProps} allowDecimals={false} />
-                <YAxis type="category" dataKey="name" {...axisProps} width={160} tick={<WrapTick />} />
-                <Tooltip content={<ChartTooltip />} cursor={cursorFill} />
-                <Bar dataKey="value" name="Berita" fill={chart.accent} radius={[0, 6, 6, 0]} maxBarSize={28} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        <Card>
           <CardHeader title="Isu Dominan" subtitle="Top 10 judul berita terbanyak (merah = dominan negatif)" />
           <CardContent>
             <ResponsiveContainer width="100%" height={Math.max(160, puncakPemberitaan.length * 48)}>
@@ -297,6 +282,21 @@ export function IsuProvinsi() {
                   {puncakPemberitaan.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
                   <LabelList dataKey="jumlah" position="right" style={{ fontSize: 11, fontWeight: 600, fill: '#64748b' }} />
                 </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader title="Top 5 Kategori Isu Provinsi DKI Jakarta" subtitle="Jumlah berita/postingan per kategori isu" />
+          <CardContent>
+            <ResponsiveContainer width="100%" height={Math.max(160, top5Isu.length * 40)}>
+              <BarChart data={top5Isu} layout="vertical" margin={{ left: 8, right: 24, top: 0, bottom: 0 }}>
+                <CartesianGrid {...gridProps} horizontal={false} />
+                <XAxis type="number" {...axisProps} allowDecimals={false} />
+                <YAxis type="category" dataKey="name" {...axisProps} width={160} tick={<WrapTick />} />
+                <Tooltip content={<ChartTooltip />} cursor={cursorFill} />
+                <Bar dataKey="value" name="Berita" fill={chart.accent} radius={[0, 6, 6, 0]} maxBarSize={28} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
