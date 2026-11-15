@@ -27,7 +27,7 @@ import { daftarJenisSumber, daftarNarasumber, reputasiByEntitas } from '@/data/m
 import { getJenisSumber } from '@/lib/utils'
 import beritaJakartaRaw from '@/data/beritaJakarta.json'
 
-type BeritaRaw = { tanggal: string; judul: string; sumber: string; sentimen: string; url: string; kategori: string; entitasTerkait?: string }
+type BeritaRaw = { tanggal: string; judul: string; sumber: string; sentimen: string; url: string; kategori: string; entitasTerkait?: string; tipe?: string }
 const beritaJakarta = beritaJakartaRaw as BeritaRaw[]
 import type { EntitasPimpinan } from '@/types'
 
@@ -90,9 +90,29 @@ export function IsuPimpinan() {
       .slice(0, 8)
   }, [beritaTerkait])
 
-  const puncakPemberitaan = useMemo(() => {
+  const isuGubernur = useMemo(() => {
     const map = new Map<string, { judul: string; jumlah: number; negatif: number; tanggal: string }>()
     for (const b of beritaTerkait) {
+      if ((b.tipe ?? 'gubernur') === 'personal') continue
+      const e = map.get(b.judul) ?? { judul: b.judul, jumlah: 0, negatif: 0, tanggal: b.tanggal }
+      e.jumlah++
+      if (b.sentimen === 'Negatif') e.negatif++
+      if (b.tanggal > e.tanggal) e.tanggal = b.tanggal
+      map.set(b.judul, e)
+    }
+    return Array.from(map.values())
+      .sort((a, b) => b.jumlah - a.jumlah)
+      .slice(0, 10)
+      .map(({ judul, jumlah, negatif }) => {
+        const isNegatif = jumlah > 0 && negatif / jumlah > 0.5
+        return { name: judul, judul, jumlah, fill: isNegatif ? '#ef4444' : '#1e293b' }
+      })
+  }, [beritaTerkait])
+
+  const isuPersonal = useMemo(() => {
+    const map = new Map<string, { judul: string; jumlah: number; negatif: number; tanggal: string }>()
+    for (const b of beritaTerkait) {
+      if ((b.tipe ?? 'gubernur') !== 'personal') continue
       const e = map.get(b.judul) ?? { judul: b.judul, jumlah: 0, negatif: 0, tanggal: b.tanggal }
       e.jumlah++
       if (b.sentimen === 'Negatif') e.negatif++
@@ -287,13 +307,13 @@ export function IsuPimpinan() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        {puncakPemberitaan.length > 0 && (
+        {isuGubernur.length > 0 && (
           <Card>
             <CardContent>
-              <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Isu Dominan</p>
-              <ResponsiveContainer width="100%" height={Math.max(200, puncakPemberitaan.length * 44)}>
+              <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Isu Gubernur</p>
+              <ResponsiveContainer width="100%" height={Math.max(200, isuGubernur.length * 44)}>
                 <BarChart
-                  data={puncakPemberitaan}
+                  data={isuGubernur}
                   layout="vertical"
                   margin={{ left: 8, right: 40, top: 0, bottom: 0 }}
                   style={{ cursor: 'pointer' }}
@@ -307,7 +327,7 @@ export function IsuPimpinan() {
                   <YAxis type="category" dataKey="name" {...axisProps} width={160} tick={<WrapTick />} />
                   <Tooltip content={<ChartTooltip />} cursor={cursorFill} />
                   <Bar dataKey="jumlah" name="Berita" radius={[0, 4, 4, 0]} maxBarSize={22}>
-                    {puncakPemberitaan.map((entry, i) => (
+                    {isuGubernur.map((entry, i) => (
                       <Cell
                         key={i}
                         fill={entry.fill}
@@ -322,21 +342,56 @@ export function IsuPimpinan() {
           </Card>
         )}
 
-        <Card>
-          <CardHeader title="Ekspos Media" subtitle="Jumlah pemberitaan per nama media" />
-          <CardContent>
-            <ResponsiveContainer width="100%" height={Math.max(200, eksposMedia.length * 36)}>
-              <BarChart data={eksposMedia} layout="vertical" margin={{ left: 8, right: 12, top: 0, bottom: 0 }}>
-                <CartesianGrid {...gridProps} horizontal={false} />
-                <XAxis type="number" {...axisProps} allowDecimals={false} />
-                <YAxis type="category" dataKey="name" {...axisProps} width={120} />
-                <Tooltip content={<ChartTooltip />} cursor={cursorFill} />
-                <Bar dataKey="value" name="Berita" fill={chart.accent} radius={[0, 6, 6, 0]} maxBarSize={20} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+        {isuPersonal.length > 0 && (
+          <Card>
+            <CardContent>
+              <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Isu Personal</p>
+              <ResponsiveContainer width="100%" height={Math.max(200, isuPersonal.length * 44)}>
+                <BarChart
+                  data={isuPersonal}
+                  layout="vertical"
+                  margin={{ left: 8, right: 40, top: 0, bottom: 0 }}
+                  style={{ cursor: 'pointer' }}
+                  onClick={(d) => {
+                    const judul = d?.activePayload?.[0]?.payload?.judul
+                    if (judul) setSelectedJudul((prev) => prev === judul ? null : judul)
+                  }}
+                >
+                  <CartesianGrid {...gridProps} horizontal={false} />
+                  <XAxis type="number" {...axisProps} allowDecimals={false} />
+                  <YAxis type="category" dataKey="name" {...axisProps} width={160} tick={<WrapTick />} />
+                  <Tooltip content={<ChartTooltip />} cursor={cursorFill} />
+                  <Bar dataKey="jumlah" name="Berita" radius={[0, 4, 4, 0]} maxBarSize={22}>
+                    {isuPersonal.map((entry, i) => (
+                      <Cell
+                        key={i}
+                        fill={entry.fill}
+                        opacity={selectedJudul && selectedJudul !== entry.judul ? 0.3 : 1}
+                      />
+                    ))}
+                    <LabelList dataKey="jumlah" position="right" style={{ fontSize: 11, fontWeight: 600, fill: '#64748b' }} />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        )}
       </div>
+
+      <Card>
+        <CardHeader title="Ekspos Media" subtitle="Jumlah pemberitaan per nama media" />
+        <CardContent>
+          <ResponsiveContainer width="100%" height={Math.max(200, eksposMedia.length * 36)}>
+            <BarChart data={eksposMedia} layout="vertical" margin={{ left: 8, right: 12, top: 0, bottom: 0 }}>
+              <CartesianGrid {...gridProps} horizontal={false} />
+              <XAxis type="number" {...axisProps} allowDecimals={false} />
+              <YAxis type="category" dataKey="name" {...axisProps} width={120} />
+              <Tooltip content={<ChartTooltip />} cursor={cursorFill} />
+              <Bar dataKey="value" name="Berita" fill={chart.accent} radius={[0, 6, 6, 0]} maxBarSize={20} />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
 
       {topNarasumber.length > 0 && (
         <Card>
