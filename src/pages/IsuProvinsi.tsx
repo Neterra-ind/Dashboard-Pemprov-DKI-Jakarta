@@ -16,6 +16,7 @@ import {
   YAxis,
 } from 'recharts'
 import { DataTable } from '@/components/DataTable'
+import { DateRangeFilter } from '@/components/DateRangeFilter'
 import { FilterSelect } from '@/components/FilterSelect'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { PageHeader } from '@/components/ui/PageHeader'
@@ -67,6 +68,8 @@ export function IsuProvinsi() {
   const [kategori, setKategori] = useState('')
   const [klasifikasi, setKlasifikasi] = useState('')
   const [jenisSumber, setJenisSumber] = useState('')
+  const [dariTanggal, setDariTanggal] = useState('')
+  const [sampaiTanggal, setSampaiTanggal] = useState('')
 
   const terfilter = useMemo(
     () =>
@@ -86,9 +89,11 @@ export function IsuProvinsi() {
       (b) =>
         !b.entitasTerkait &&
         kategoriTerfilter.has(b.kategori) &&
-        (!jenisSumber || getJenisSumber(b.sumber) === jenisSumber),
+        (!jenisSumber || getJenisSumber(b.sumber) === jenisSumber) &&
+        (!dariTanggal || b.tanggal >= dariTanggal) &&
+        (!sampaiTanggal || b.tanggal <= sampaiTanggal),
     ),
-    [kategoriTerfilter, jenisSumber],
+    [kategoriTerfilter, jenisSumber, dariTanggal, sampaiTanggal],
   )
 
   const rentangTanggalData = useMemo(() => {
@@ -152,10 +157,25 @@ export function IsuProvinsi() {
       />
 
       <Card className="p-5">
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap items-end gap-3">
           <FilterSelect label="Kategori Isu" value={kategori} options={daftarKategoriIsu} onChange={setKategori} />
           <FilterSelect label="Klasifikasi" value={klasifikasi} options={semuaKlasifikasi} onChange={setKlasifikasi} />
           <FilterSelect label="Jenis Sumber" value={jenisSumber} options={daftarJenisSumber} onChange={setJenisSumber} />
+          <DateRangeFilter
+            dari={dariTanggal}
+            sampai={sampaiTanggal}
+            onDariChange={setDariTanggal}
+            onSampaiChange={setSampaiTanggal}
+          />
+          {(dariTanggal || sampaiTanggal) && (
+            <button
+              type="button"
+              onClick={() => { setDariTanggal(''); setSampaiTanggal('') }}
+              className="self-end rounded-lg border border-slate-200 px-2.5 py-2 text-xs text-slate-500 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"
+            >
+              Reset Tanggal
+            </button>
+          )}
         </div>
       </Card>
 
