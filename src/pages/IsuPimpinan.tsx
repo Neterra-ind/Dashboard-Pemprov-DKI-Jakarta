@@ -289,7 +289,7 @@ export function IsuPimpinan() {
       {puncakPemberitaan.length > 0 && (
         <Card>
           <CardContent>
-            <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Puncak Pemberitaan</p>
+            <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Isu Dominan</p>
               <ResponsiveContainer width="100%" height={Math.max(200, puncakPemberitaan.length * 44)}>
                 <BarChart
                   data={puncakPemberitaan}

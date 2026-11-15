@@ -285,7 +285,7 @@ export function IsuProvinsi() {
         </Card>
 
         <Card>
-          <CardHeader title="Puncak Pemberitaan" subtitle="Top 10 judul berita terbanyak (merah = dominan negatif)" />
+          <CardHeader title="Isu Dominan" subtitle="Top 10 judul berita terbanyak (merah = dominan negatif)" />
           <CardContent>
             <ResponsiveContainer width="100%" height={Math.max(160, puncakPemberitaan.length * 48)}>
               <BarChart data={puncakPemberitaan} layout="vertical" margin={{ left: 8, right: 48, top: 0, bottom: 0 }}>
