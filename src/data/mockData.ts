@@ -465,3 +465,11 @@ export const semuaLevelRisiko: LevelRisiko[] = ['Low', 'Medium', 'High', 'Critic
 export const semuaSentimenList: Sentimen[] = SENTIMEN
 export const semuaKlasifikasi: Klasifikasi[] = ['Positif', 'Negatif', 'Potensi Negatif']
 export const semuaScopeIsu: ScopeIsu[] = ['Nasional', 'Provinsi', 'Gubernur', 'Wakil Gubernur']
+
+export const daftarNarasumber = [
+  { nama: 'Pramono Anung', jabatan: 'Gubernur DKI Jakarta', kunci: ['Pramono Anung', 'Pramono'] },
+  { nama: 'Rano Karno', jabatan: 'Wakil Gubernur DKI Jakarta', kunci: ['Rano Karno', 'Rano'] },
+  { nama: 'Joko Widodo', jabatan: 'Presiden RI ke-7', kunci: ['Jokowi', 'Joko Widodo'] },
+  { nama: 'Prabowo', jabatan: 'Presiden RI', kunci: ['Prabowo'] },
+  { nama: 'Purbaya', jabatan: 'Ketua OJK', kunci: ['Purbaya'] },
+]
