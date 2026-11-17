@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { CheckCircle2, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react'
+import { AlertTriangle, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react'
 import { DateRangeFilter } from '@/components/DateRangeFilter'
 import { FilterSelect } from '@/components/FilterSelect'
+import { KlasifikasiBadge } from '@/components/ui/Badge'
 import { Card } from '@/components/ui/Card'
 import { PageHeader } from '@/components/ui/PageHeader'
-import { daftarBerita, daftarJenisSumber } from '@/data/mockData'
-import { getJenisSumber } from '@/lib/utils'
+import { daftarBerita, daftarEarlyWarning, daftarJenisSumber } from '@/data/mockData'
+import type { JenisSumber } from '@/types'
 
 const PAGE_SIZE = 10
 
@@ -15,28 +16,31 @@ export function EarlyWarning() {
   const [sampaiTanggal, setSampaiTanggal] = useState('')
   const [page, setPage] = useState(1)
 
-  const beritaNegatif = useMemo(
-    () =>
-      daftarBerita
-        .filter((b) => b.sentimen === 'Negatif')
-        .sort((a, b) => b.tanggal.localeCompare(a.tanggal)),
-    [],
-  )
+  // Lookup isuId → URL berita pertama (untuk link sumber artikel)
+  const urlByIsuId = useMemo(() => {
+    const map = new Map<string, { url: string; sumber: string }>()
+    for (const b of daftarBerita) {
+      if (!map.has(b.isuId) && b.url && b.url.startsWith('http')) {
+        map.set(b.isuId, { url: b.url, sumber: b.sumber })
+      }
+    }
+    return map
+  }, [])
 
   const terfilter = useMemo(
     () =>
-      beritaNegatif.filter((b) => {
-        if (jenisSumber && getJenisSumber(b.sumber) !== jenisSumber) return false
-        if (dariTanggal && b.tanggal < dariTanggal) return false
-        if (sampaiTanggal && b.tanggal > sampaiTanggal) return false
-        return true
-      }),
-    [beritaNegatif, jenisSumber, dariTanggal, sampaiTanggal],
+      daftarEarlyWarning
+        .filter((isu) => {
+          if (jenisSumber && !isu.sumberUtama.includes(jenisSumber as JenisSumber)) return false
+          if (dariTanggal && isu.tanggalMulai < dariTanggal) return false
+          if (sampaiTanggal && isu.tanggalMulai > sampaiTanggal) return false
+          return true
+        })
+        .sort((a, b) => b.tanggalMulai.localeCompare(a.tanggalMulai)),
+    [jenisSumber, dariTanggal, sampaiTanggal],
   )
 
-  useEffect(() => {
-    setPage(1)
-  }, [jenisSumber, dariTanggal, sampaiTanggal])
+  useEffect(() => { setPage(1) }, [jenisSumber, dariTanggal, sampaiTanggal])
 
   const totalPage = Math.max(1, Math.ceil(terfilter.length / PAGE_SIZE))
   const safePage = Math.min(page, totalPage)
@@ -46,7 +50,7 @@ export function EarlyWarning() {
     <div className="space-y-6">
       <PageHeader
         title="Isu Negatif"
-        subtitle="Berita negatif yang perlu direspons OPD."
+        subtitle="Isu yang terklasifikasi Negatif atau Potensi Negatif dan perlu direspons OPD."
       />
 
       <Card className="p-4">
@@ -78,8 +82,8 @@ export function EarlyWarning() {
       <Card>
         {terfilter.length === 0 ? (
           <div className="p-8 text-center text-sm text-slate-400">
-            <CheckCircle2 className="mx-auto mb-2 h-8 w-8 text-emerald-400" />
-            Tidak ada berita negatif dengan filter saat ini.
+            <AlertTriangle className="mx-auto mb-2 h-8 w-8 text-slate-300" />
+            Tidak ada isu negatif dengan filter saat ini.
           </div>
         ) : (
           <>
@@ -89,67 +93,58 @@ export function EarlyWarning() {
                   <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                     <th className="w-10 px-4 py-3">No</th>
                     <th className="w-24 px-4 py-3">Tanggal</th>
-                    <th className="min-w-[220px] px-4 py-3">Judul</th>
+                    <th className="min-w-[220px] px-4 py-3">Nama Isu</th>
                     <th className="min-w-[200px] px-4 py-3">Ringkasan</th>
                     <th className="w-44 px-4 py-3">Kewenangan OPD</th>
+                    <th className="w-28 px-4 py-3">Klasifikasi</th>
                     <th className="w-36 px-4 py-3">Sumber Data</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {sliced.map((b, idx) => {
+                  {sliced.map((isu, idx) => {
                     const nomor = (safePage - 1) * PAGE_SIZE + idx + 1
-                    const isLink = !!b.url && b.url !== '#' && b.url.startsWith('http')
-                    const ringkasan = b.ringkasanAI
-                      ? b.ringkasanAI.length > 160
-                        ? b.ringkasanAI.slice(0, 160) + '…'
-                        : b.ringkasanAI
-                      : '—'
+                    const ringkasan = isu.ringkasanAI.length > 160
+                      ? isu.ringkasanAI.slice(0, 160) + '…'
+                      : isu.ringkasanAI
+                    const link = urlByIsuId.get(isu.id)
                     return (
                       <tr
-                        key={b.id}
+                        key={isu.id}
                         className="align-top transition-colors hover:bg-slate-50/60"
                       >
                         <td className="px-4 py-3 font-medium tabular-nums text-slate-400">
                           {nomor}
                         </td>
                         <td className="whitespace-nowrap px-4 py-3 text-slate-500">
-                          {b.tanggal}
+                          {isu.tanggalMulai}
                         </td>
-                        <td className="px-4 py-3">
-                          {isLink ? (
-                            <a
-                              href={b.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="font-semibold leading-snug text-slate-800 hover:text-primary hover:underline"
-                            >
-                              {b.judul}
-                            </a>
-                          ) : (
-                            <span className="font-semibold leading-snug text-slate-800">
-                              {b.judul}
-                            </span>
-                          )}
+                        <td className="px-4 py-3 font-semibold leading-snug text-slate-800">
+                          {isu.namaIsu}
                         </td>
                         <td className="px-4 py-3 text-xs leading-relaxed text-slate-600">
                           {ringkasan}
                         </td>
                         <td className="px-4 py-3 text-xs font-medium text-slate-700">
-                          {b.opd}
+                          {isu.opd}
                         </td>
                         <td className="px-4 py-3">
-                          {isLink ? (
+                          <KlasifikasiBadge value={isu.klasifikasi} />
+                        </td>
+                        <td className="px-4 py-3">
+                          {link ? (
                             <a
-                              href={b.url}
+                              href={link.url}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
                             >
                               <ExternalLink className="h-3 w-3 shrink-0" />
-                              {b.sumber}
+                              {link.sumber}
                             </a>
                           ) : (
-                            <span className="text-xs text-slate-500">{b.sumber}</span>
+                            <span className="text-xs text-slate-400">
+                              {isu.sumberUtama.join(', ')}
+                            </span>
                           )}
                         </td>
                       </tr>
@@ -163,7 +158,7 @@ export function EarlyWarning() {
               <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3">
                 <span className="text-xs text-slate-500">
                   {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, terfilter.length)} dari{' '}
-                  {terfilter.length} berita
+                  {terfilter.length} isu
                 </span>
                 <div className="flex items-center gap-1">
                   <button
