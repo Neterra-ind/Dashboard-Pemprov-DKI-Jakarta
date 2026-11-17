@@ -89,7 +89,7 @@ export function IsuProvinsi() {
     () => beritaJakarta.filter(
       (b) =>
         !b.entitasTerkait &&
-        kategoriTerfilter.has(b.kategori) &&
+        (kategoriTerfilter as Set<string>).has(b.kategori) &&
         (!jenisSumber || getJenisSumber(b.sumber) === jenisSumber) &&
         (!dariTanggal || b.tanggal >= dariTanggal) &&
         (!sampaiTanggal || b.tanggal <= sampaiTanggal),

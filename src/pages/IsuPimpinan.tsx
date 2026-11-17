@@ -334,7 +334,7 @@ export function IsuPimpinan() {
                   margin={{ left: 8, right: 40, top: 0, bottom: 0 }}
                   style={{ cursor: 'pointer' }}
                   onClick={(d) => {
-                    const judul = d?.activePayload?.[0]?.payload?.judul
+                    const judul = (d as any)?.activePayload?.[0]?.payload?.judul
                     if (judul) setSelectedJudul((prev) => prev === judul ? null : judul)
                   }}
                 >
@@ -369,7 +369,7 @@ export function IsuPimpinan() {
                   margin={{ left: 8, right: 40, top: 0, bottom: 0 }}
                   style={{ cursor: 'pointer' }}
                   onClick={(d) => {
-                    const judul = d?.activePayload?.[0]?.payload?.judul
+                    const judul = (d as any)?.activePayload?.[0]?.payload?.judul
                     if (judul) setSelectedJudul((prev) => prev === judul ? null : judul)
                   }}
                 >
