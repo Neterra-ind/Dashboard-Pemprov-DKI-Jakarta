@@ -32,7 +32,6 @@ import {
   daftarJenisSumber,
   daftarOpd,
   daftarRankingOpd,
-  substansiMasalahUntuk,
 } from '@/data/mockData'
 import { getJenisSumber } from '@/lib/utils'
 import beritaJakartaRaw from '@/data/beritaJakarta.json'
@@ -504,7 +503,7 @@ export function Dashboard() {
                 to={`/isu/${isu.id}`}
                 className="rounded-xl border border-[var(--color-border)] p-4 transition-colors hover:border-primary/30 hover:bg-slate-50"
               >
-                <p className="text-sm font-semibold text-slate-800">{substansiMasalahUntuk(isu)}</p>
+                <p className="text-sm font-semibold text-slate-800">{isu.namaIsu}</p>
                 <p className="mt-1.5 text-xs text-slate-500">
                   {isu.jumlahBerita} ekspos berita · Kewenangan: {isu.opd}
                 </p>

@@ -138,6 +138,27 @@ export function IsuPimpinan() {
       .sort((a, b) => b.jumlah - a.jumlah)
   , [beritaTerkait])
 
+  const topKategori = useMemo(() => {
+    const map = new Map<string, number>()
+    for (const b of beritaTerkait) {
+      if (b.kategori) map.set(b.kategori, (map.get(b.kategori) ?? 0) + 1)
+    }
+    return Array.from(map.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([k]) => k)
+  }, [beritaTerkait])
+
+  const sentimenPie = useMemo(() => {
+    const positif = beritaTerkait.filter((b) => b.sentimen === 'Positif').length
+    const negatif = beritaTerkait.filter((b) => b.sentimen === 'Negatif').length
+    const total = beritaTerkait.length || 1
+    return [
+      { name: 'Positif', value: Math.round((positif / total) * 100) },
+      { name: 'Negatif', value: Math.round((negatif / total) * 100) },
+    ]
+  }, [beritaTerkait])
+
   function WrapTick({ x, y, payload }: { x?: number; y?: number; payload?: { value: string } }) {
     const text = payload?.value ?? ''
     const maxChars = 22
@@ -187,11 +208,6 @@ export function IsuPimpinan() {
   }
 
   if (!reputasi) return null
-
-  const sentimenPie = [
-    { name: 'Positif', value: reputasi.positiveRatio },
-    { name: 'Negatif', value: reputasi.negativeRatio },
-  ]
 
   return (
     <div className="space-y-6">
@@ -275,7 +291,7 @@ export function IsuPimpinan() {
             </div>
 
             <div className="flex flex-wrap gap-1.5">
-              {reputasi.topIsu.map((t) => (
+              {topKategori.map((t) => (
                 <span
                   key={t}
                   className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600"
@@ -310,7 +326,7 @@ export function IsuPimpinan() {
         {isuGubernur.length > 0 && (
           <Card>
             <CardContent>
-              <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Isu Gubernur</p>
+              <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-slate-400">Isu {tab}</p>
               <ResponsiveContainer width="100%" height={Math.max(200, isuGubernur.length * 44)}>
                 <BarChart
                   data={isuGubernur}
